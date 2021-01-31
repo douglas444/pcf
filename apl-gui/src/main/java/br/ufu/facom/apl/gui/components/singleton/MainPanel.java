@@ -6,6 +6,7 @@ import java.awt.*;
 public class MainPanel extends JPanel {
 
     private static MainPanel instance;
+    private final double MARGIN = 0.2;
 
     private MainPanel() {
 
@@ -18,39 +19,65 @@ public class MainPanel extends JPanel {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
+        final JPanel pnlDummyRightMargin = new JPanel();
+        final JPanel pnlDummyLeftMargin = new JPanel();
+
         final GridBagConstraints c = new GridBagConstraints();
 
-        c.weightx = 1;
+
+        c.weightx = MARGIN;
         c.weighty = 0;
         c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 4;
+        c.anchor = GridBagConstraints.CENTER;
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(10, 0, 0, 0);
+        pnlScrollableContent.add(pnlDummyRightMargin, c);
+
+        c.weightx = MARGIN;
+        c.weighty = 0;
+        c.gridx = 2;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 4;
+        c.anchor = GridBagConstraints.CENTER;
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(10, 0, 0, 0);
+        pnlScrollableContent.add(pnlDummyLeftMargin, c);
+
+        c.weightx = 1 - MARGIN;
+        c.weighty = 0;
+        c.gridx = 1;
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTH;
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(10, 40, 0, 40);
+        c.insets = new Insets(10, 0, 0, 0);
         pnlScrollableContent.add(FinderPanel.getInstance(), c);
 
-        c.weightx = 1;
+        c.weightx = 1 - MARGIN;
         c.weighty = 0;
-        c.gridx = 0;
+        c.gridx = 1;
         c.gridy = 1;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTH;
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(10, 40, 0, 40);
-        pnlScrollableContent.add(ConfiguratorPanel.getInstance(), c);
+        c.insets = new Insets(10, 0, 0, 0);
+        pnlScrollableContent.add(ConfigurationPanel.getInstance(), c);
 
-        c.weightx = 1;
+        c.weightx = 1 - MARGIN;
         c.weighty = 1;
-        c.gridx = 0;
+        c.gridx = 1;
         c.gridy = 2;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTH;
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(20, 40, 10, 40);
+        c.insets = new Insets(10, 0, 10, 0);
         pnlScrollableContent.add(OutputPanel.getInstance(), c);
 
         c.weightx = 1;

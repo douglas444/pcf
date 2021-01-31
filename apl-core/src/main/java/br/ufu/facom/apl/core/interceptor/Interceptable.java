@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 public interface Interceptable {
 
-    void execute(final Interceptor interceptor, final HashMap<String, String> parameters);
+    Log execute(final Interceptor interceptor,
+                final HashMap<String, String> nominalParameters,
+                final HashMap<String, Double> numericParameters);
 
 }

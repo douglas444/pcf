@@ -12,9 +12,11 @@ import java.util.List;
 public class InstanceConfiguratorComponent extends JPanel {
 
     private final JPanel pnlParameters;
+    private final JPanel pnlNumericParameters;
+    private final JPanel pnlNominalParameters;
     private final JComboBox<String> cmbInstances;
-    private final HashMap<String, JTextField> txtFieldsByParameterName;
-    private final HashMap<String, JTextField> txtFieldsIncrementByParameterName;
+    private final HashMap<String, JTextField> txtFieldByParameterName;
+    private final HashMap<String, JSpinner> spinnerByParameterName;
     private final HashMap<String, Object> instanceByName;
 
     public InstanceConfiguratorComponent(final String title) {
@@ -22,9 +24,11 @@ public class InstanceConfiguratorComponent extends JPanel {
         this.setLayout(new GridBagLayout());
 
         this.pnlParameters = new JPanel(new GridBagLayout());
+        this.pnlNumericParameters = new JPanel(new GridBagLayout());
+        this.pnlNominalParameters = new JPanel(new GridBagLayout());
         this.cmbInstances = new JComboBox<>();
-        this.txtFieldsByParameterName = new HashMap<>();
-        this.txtFieldsIncrementByParameterName = new HashMap<>();
+        this.txtFieldByParameterName = new HashMap<>();
+        this.spinnerByParameterName = new HashMap<>();
         this.instanceByName = new HashMap<>();
 
         initializeComponents(title);
@@ -48,6 +52,8 @@ public class InstanceConfiguratorComponent extends JPanel {
         this.cmbInstances.setFont(this.cmbInstances.getFont().deriveFont(Font.PLAIN));
         this.cmbInstances.setPrototypeDisplayValue("");
         this.pnlParameters.setVisible(false);
+        this.pnlNominalParameters.setVisible(false);;
+        this.pnlNumericParameters.setVisible(false);
 
     }
 
@@ -61,19 +67,41 @@ public class InstanceConfiguratorComponent extends JPanel {
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        c.anchor = GridBagConstraints.CENTER;
-        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.NORTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(5, 5, 5, 5);
         this.add(this.cmbInstances, c);
 
-        c.weightx = 0;
+        c.weightx = 1;
+        c.weighty = 0;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.NORTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0, 0, 0, 0);
+        this.pnlParameters.add(this.pnlNominalParameters, c);
+
+        c.weightx = 1;
         c.weighty = 0;
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 1;
         c.gridheight = 1;
-        c.anchor = GridBagConstraints.CENTER;
-        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.NORTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(0, 0, 0, 0);
+        this.pnlParameters.add(this.pnlNumericParameters, c);
+
+        c.weightx = 0;
+        c.weighty = 1;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.NORTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(10, 0, 0, 0);
         this.add(this.pnlParameters, c);
 
@@ -94,9 +122,13 @@ public class InstanceConfiguratorComponent extends JPanel {
             if (instance instanceof Configurable) {
 
                 final Configurable configurable = (Configurable) instance;
-                final List<String> parametersNames = configurable.getParametersNames();
-                this.setParameters(parametersNames);
+                this.setNumericParameters(configurable.getNumericParametersNames());
+                this.setNominalParameters(configurable.getNominalParametersNames());
 
+                if (!this.getNumericParameterValueByName().isEmpty()
+                        || !this.getNominalParameterValueByName().isEmpty()) {
+                    this.pnlParameters.setVisible(true);
+                }
             }
         });
 
@@ -104,18 +136,21 @@ public class InstanceConfiguratorComponent extends JPanel {
 
     public void setCmbInstances(final HashMap<String, Object> instanceByName) {
 
+        this.instanceByName.clear();
+        this.cmbInstances.removeAllItems();
+
         this.instanceByName.putAll(instanceByName);
         this.instanceByName.keySet().forEach(this.cmbInstances::addItem);
 
     }
 
-    private void setParameters(final List<String> parametersNames) {
+    private void setNominalParameters(final List<String> parametersNames) {
 
-        this.pnlParameters.setVisible(!parametersNames.isEmpty());
+        this.pnlNominalParameters.setVisible(!parametersNames.isEmpty());
         final GridBagConstraints c = new GridBagConstraints();
 
-        this.txtFieldsByParameterName.clear();
-        this.pnlParameters.removeAll();
+        this.txtFieldByParameterName.clear();
+        this.pnlNominalParameters.removeAll();
 
         for (int i = 0; i < parametersNames.size(); i++) {
 
@@ -129,12 +164,12 @@ public class InstanceConfiguratorComponent extends JPanel {
             c.gridwidth = 1;
             c.gridheight = 1;
             c.anchor = GridBagConstraints.WEST;
-            c.fill = GridBagConstraints.BOTH;
+            c.fill = GridBagConstraints.NONE;
             c.insets = new Insets(2, 2, 2, 2);
-            this.pnlParameters.add(lblParameter, c);
+            this.pnlNominalParameters.add(lblParameter, c);
 
             final JTextField txtFieldParameter = new JTextField(1);
-            this.txtFieldsByParameterName.put(parametersNames.get(i) , txtFieldParameter);
+            this.txtFieldByParameterName.put(parametersNames.get(i) , txtFieldParameter);
 
             c.weightx = 1;
             c.weighty = 0;
@@ -145,37 +180,53 @@ public class InstanceConfiguratorComponent extends JPanel {
             c.anchor = GridBagConstraints.WEST;
             c.fill = GridBagConstraints.BOTH;
             c.insets = new Insets(2, 2, 2, 2);
-            this.pnlParameters.add(txtFieldParameter, c);
+            this.pnlNominalParameters.add(txtFieldParameter, c);
+
+        }
+
+    }
 
 
+    private void setNumericParameters(final List<String> parametersNames) {
 
-            final JLabel lblIncrement = new JLabel("Inc.: ");
-            lblIncrement.setFont(lblParameter.getFont().deriveFont(Font.PLAIN));
+        this.pnlNumericParameters.setVisible(!parametersNames.isEmpty());
+        final GridBagConstraints c = new GridBagConstraints();
+
+        this.spinnerByParameterName.clear();
+        this.pnlNumericParameters.removeAll();
+
+        for (int i = 0; i < parametersNames.size(); i++) {
+
+            final JLabel lblParameter = new JLabel(parametersNames.get(i) + ":");
+            lblParameter.setFont(lblParameter.getFont().deriveFont(Font.PLAIN));
 
             c.weightx = 0;
             c.weighty = 0;
-            c.gridx = 2;
+            c.gridx = 0;
             c.gridy = i;
             c.gridwidth = 1;
             c.gridheight = 1;
             c.anchor = GridBagConstraints.WEST;
-            c.fill = GridBagConstraints.BOTH;
+            c.fill = GridBagConstraints.NONE;
             c.insets = new Insets(2, 2, 2, 2);
-            this.pnlParameters.add(lblIncrement, c);
+            this.pnlNumericParameters.add(lblParameter, c);
 
-            final JTextField txtFieldIncrement = new JTextField(1);
-            this.txtFieldsIncrementByParameterName.put(parametersNames.get(i) , txtFieldIncrement);
+            final SpinnerNumberModel model = new SpinnerNumberModel(0.0, -Double.MAX_VALUE, Double.MAX_VALUE,0.1);
+            final JSpinner spinnerParameter = new JSpinner(model);
+            ((JSpinner.NumberEditor) spinnerParameter.getEditor()).getTextField().setColumns(1);
+            this.spinnerByParameterName.put(parametersNames.get(i) , spinnerParameter);
 
             c.weightx = 1;
             c.weighty = 0;
-            c.gridx = 3;
+            c.gridx = 1;
             c.gridy = i;
             c.gridwidth = 1;
             c.gridheight = 1;
             c.anchor = GridBagConstraints.WEST;
             c.fill = GridBagConstraints.BOTH;
             c.insets = new Insets(2, 2, 2, 2);
-            this.pnlParameters.add(txtFieldIncrement, c);
+            this.pnlNumericParameters.add(spinnerParameter, c);
+
         }
 
     }
@@ -185,23 +236,23 @@ public class InstanceConfiguratorComponent extends JPanel {
         return this.instanceByName.getOrDefault(selectedItem, null);
     }
 
-    public HashMap<String, String> getParameterValueByName() {
+    public HashMap<String, String> getNominalParameterValueByName() {
 
         final HashMap<String, String> parameterValueByName = new HashMap<>();
-        this.txtFieldsByParameterName.forEach((parameterName, txtField) -> {
+        this.txtFieldByParameterName.forEach((parameterName, txtField) -> {
             parameterValueByName.put(parameterName, txtField.getText());
         });
         return parameterValueByName;
 
     }
 
-    public HashMap<String, String> getParameterIncrementByName() {
+    public HashMap<String, Double> getNumericParameterValueByName() {
 
-        final HashMap<String, String> parameterIncrementByName = new HashMap<>();
-        this.txtFieldsIncrementByParameterName.forEach((parameterName, txtField) -> {
-            parameterIncrementByName.put(parameterName, txtField.getText());
+        final HashMap<String, Double> parameterValueByName = new HashMap<>();
+        this.spinnerByParameterName.forEach((parameterName, spinner) -> {
+            parameterValueByName.put(parameterName, ((Double) spinner.getValue()));
         });
-        return parameterIncrementByName;
+        return parameterValueByName;
 
     }
 }

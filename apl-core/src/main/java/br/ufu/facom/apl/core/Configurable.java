@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface Configurable {
 
-    List<String> getParametersNames();
+    List<String> getNominalParametersNames();
+    List<String> getNumericParametersNames();
 
 }

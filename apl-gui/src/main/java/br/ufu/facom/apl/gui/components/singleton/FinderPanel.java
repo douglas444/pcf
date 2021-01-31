@@ -115,12 +115,19 @@ public class FinderPanel extends JPanel {
                     final HashMap<Class<?>, HashMap<String, Object>> instancesMapByClass =
                             Service.digestClasspathArray(files.toArray(new File[]{}));
 
-                    ConfiguratorPanel.getInstance().getInterceptableConfigurator()
+                    ConfigurationPanel.getInstance().getInterceptableConfigurator()
                             .setCmbInstances(instancesMapByClass.get(Interceptable.class));
-                    ConfiguratorPanel.getInstance().getMetaCategorizerConfigurator()
+                    ConfigurationPanel.getInstance().getMetaCategorizerConfigurator()
                             .setCmbInstances(instancesMapByClass.get(MetaCategorizer.class));
-                    ConfiguratorPanel.getInstance().getActiveLearningStrategyConfigurator()
+                    ConfigurationPanel.getInstance().getActiveLearningStrategyConfigurator()
                             .setCmbInstances(instancesMapByClass.get(ActiveLearningStrategy.class));
+
+                    VariationPanel.getInstance().setVisible(false);
+
+                    if (ConfigurationPanel.getInstance().hasNumericParameters()) {
+                        VariationPanel.getInstance().setVisible(true);
+                        VariationPanel.getInstance().setVariateParametersList();
+                    }
 
                     final StringBuilder builder = new StringBuilder();
 

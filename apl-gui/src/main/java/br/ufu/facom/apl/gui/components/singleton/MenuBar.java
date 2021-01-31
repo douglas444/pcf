@@ -71,25 +71,29 @@ public class MenuBar extends JMenuBar {
 
             FooterPanel.getInstance().setVisible(true);
 
-            final Interceptable interceptable = (Interceptable) ConfiguratorPanel.getInstance()
+            final Interceptable interceptable = (Interceptable) ConfigurationPanel.getInstance()
                     .getInterceptableConfigurator().getSelectedInstance();
             ;
-            final MetaCategorizer metaCategorizer = (MetaCategorizer) ConfiguratorPanel.getInstance()
+            final MetaCategorizer metaCategorizer = (MetaCategorizer) ConfigurationPanel.getInstance()
                     .getMetaCategorizerConfigurator().getSelectedInstance();
             final ActiveLearningStrategy activeLearningStrategy = (ActiveLearningStrategy)
-                    ConfiguratorPanel.getInstance().getActiveLearningStrategyConfigurator().getSelectedInstance();
+                    ConfigurationPanel.getInstance().getActiveLearningStrategyConfigurator().getSelectedInstance();
 
-            interceptable.execute(null, ConfiguratorPanel.getInstance()
-                    .getInterceptableConfigurator().getParameterValueByName());
+            interceptable.execute(null,
+                    ConfigurationPanel.getInstance().getInterceptableConfigurator().getNominalParameterValueByName(),
+                    ConfigurationPanel.getInstance().getInterceptableConfigurator().getNumericParameterValueByName());
 
-            metaCategorizer.categorize(ConfiguratorPanel.getInstance()
-                    .getMetaCategorizerConfigurator().getParameterValueByName());
+            metaCategorizer.categorize(
+                    ConfigurationPanel.getInstance().getMetaCategorizerConfigurator().getNominalParameterValueByName(),
+                    ConfigurationPanel.getInstance().getMetaCategorizerConfigurator().getNumericParameterValueByName());
 
-            activeLearningStrategy.isKnown(ConfiguratorPanel.getInstance()
-                    .getActiveLearningStrategyConfigurator().getParameterValueByName());
+            activeLearningStrategy.isKnown(
+                    ConfigurationPanel.getInstance().getActiveLearningStrategyConfigurator().getNominalParameterValueByName(),
+                    ConfigurationPanel.getInstance().getActiveLearningStrategyConfigurator().getNumericParameterValueByName());
 
-            activeLearningStrategy.isNovelty(ConfiguratorPanel.getInstance()
-                    .getActiveLearningStrategyConfigurator().getParameterValueByName());
+            activeLearningStrategy.isNovelty(
+                    ConfigurationPanel.getInstance().getActiveLearningStrategyConfigurator().getNominalParameterValueByName(),
+                    ConfigurationPanel.getInstance().getActiveLearningStrategyConfigurator().getNumericParameterValueByName());
 
             FooterPanel.getInstance().setVisible(false);
 
