@@ -18,7 +18,7 @@
     <xs:complexType name="parameterType">
         <xs:sequence>
             <xs:element type="xs:string" name="name"/>
-            <xs:element type="xs:double" name="value"/>
+            <xs:element type="xs:string" name="value"/>
             <xs:element type="xs:double" name="increment"/>
         </xs:sequence>
     </xs:complexType>
