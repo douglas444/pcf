@@ -6,7 +6,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 public class VariationPanel extends JPanel {
@@ -20,9 +19,11 @@ public class VariationPanel extends JPanel {
     private final ButtonGroup bgRadioParameter;
     private final JSpinner spinnerIncrement;
     private final JSpinner spinnerTimes;
+    private final List<JRadioButton> radioButtonParameters;
 
     private VariationPanel() {
 
+        this.radioButtonParameters = new ArrayList<>();
         this.rbUnique = new JRadioButton("Unique");
         this.rbMultiple = new JRadioButton("Multiple");
         this.pnlVariateParameter = new JPanel(new GridBagLayout());
@@ -112,7 +113,7 @@ public class VariationPanel extends JPanel {
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTH;
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(0, 0, 0, 0);
+        c.insets = new Insets(5, 5, 5, 5);
         pnlExecution.add(this.pnlVariateParameter, c);
 
         final JLabel lblIncrement = new JLabel("Increment:");
@@ -186,7 +187,7 @@ public class VariationPanel extends JPanel {
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTH;
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(0, 0, 0, 0);
+        c.insets = new Insets(5, 5, 5, 5);
         pnlExecution.add(pnlVariationBorder, c);
 
         this.pnlVariateParameter.setVisible(false);
@@ -207,11 +208,8 @@ public class VariationPanel extends JPanel {
     public void setVariateParametersList() {
 
         this.pnlVariateParameter.removeAll();
-
-        final Enumeration<AbstractButton> enumeration = this.bgRadioParameter.getElements();
-        while (enumeration.hasMoreElements()) {
-            this.bgRadioParameter.remove(enumeration.nextElement());
-        }
+        this.radioButtonParameters.forEach(this.bgRadioParameter::remove);
+        this.radioButtonParameters.clear();
 
         final List<String> interceptableParametersNames = new ArrayList<>(ConfigurationPanel.getInstance()
                 .getInterceptableConfigurator().getNumericParameterValueByName().keySet());
@@ -224,48 +222,49 @@ public class VariationPanel extends JPanel {
 
         final GridBagConstraints c = new GridBagConstraints();
 
-        c.weightx = 0.333;
+        c.weightx = 1;
         c.weighty = 0;
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        c.anchor = GridBagConstraints.CENTER;
+        c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(10, 0, 0, 0);
-        this.pnlVariateParameter.add(setVariateParametersList(interceptableParametersNames,
-                this.bgRadioParameter, "Interceptor"), c);
+        this.pnlVariateParameter.add(
+                setVariateParametersList(interceptableParametersNames, "Interceptor"), c);
 
-        c.weightx = 0.333;
+        c.weightx = 1;
         c.weighty = 0;
         c.gridx = 1;
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        c.anchor = GridBagConstraints.CENTER;
+        c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(10, 0, 0, 0);
-        this.pnlVariateParameter.add(setVariateParametersList(metaCategorizerParametersNames,
-                this.bgRadioParameter, "MetaCategorizer"), c);
+        this.pnlVariateParameter.add(
+                setVariateParametersList(metaCategorizerParametersNames, "MetaCategorizer"), c);
 
-        c.weightx = 0.333;
+        c.weightx = 1;
         c.weighty = 0;
         c.gridx = 2;
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        c.anchor = GridBagConstraints.CENTER;
+        c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(10, 0, 0, 0);
-        this.pnlVariateParameter.add(setVariateParametersList(activeLearningStrategyParametersNames,
-                this.bgRadioParameter, "Active Learning Strategy"), c);
+        this.pnlVariateParameter.add(
+                setVariateParametersList(activeLearningStrategyParametersNames, "Active Learning Strategy"), c);
 
+        if (!this.radioButtonParameters.isEmpty()) {
+            this.radioButtonParameters.get(0).setSelected(true);
+        }
 
     }
 
-    private static JPanel setVariateParametersList(final List<String> parametersNames,
-                                                 final ButtonGroup buttonGroup,
-                                                 final String title) {
+    private JPanel setVariateParametersList(final List<String> parametersNames, final String title) {
 
         final GridBagConstraints c = new GridBagConstraints();
         final JPanel pnlRadioSection = new JPanel(new GridBagLayout());
@@ -280,22 +279,23 @@ public class VariationPanel extends JPanel {
             final JRadioButton radio = new JRadioButton(parametersNames.get(i));
             radio.setFont(radio.getFont().deriveFont(Font.PLAIN));
 
-            buttonGroup.add(radio);
-            if (buttonGroup.getSelection() == null) {
-                radio.setSelected(true);
-            }
-
             c.weightx = 0;
             c.weighty = 0;
             c.gridx = 0;
             c.gridy = i;
             c.gridwidth = 1;
             c.gridheight = 1;
-            c.anchor = GridBagConstraints.CENTER;
+            c.anchor = GridBagConstraints.WEST;
             c.fill = GridBagConstraints.NONE;
             c.insets = new Insets(0, 0, 0, 0);
             pnlRadioSection.add(radio, c);
+            this.bgRadioParameter.add(radio);
+            this.radioButtonParameters.add(radio);
+
         }
+
+        pnlRadioSection.setVisible(!parametersNames.isEmpty());
+
         return pnlRadioSection;
 
     }
@@ -316,16 +316,16 @@ public class VariationPanel extends JPanel {
         return pnlVariationBorder;
     }
 
-    public ButtonGroup getBgRadioParameter() {
-        return bgRadioParameter;
-    }
-
     public JSpinner getSpinnerIncrement() {
         return spinnerIncrement;
     }
 
     public JSpinner getSpinnerTimes() {
         return spinnerTimes;
+    }
+
+    public List<JRadioButton> getRadioButtonParameters() {
+        return radioButtonParameters;
     }
 
     static {

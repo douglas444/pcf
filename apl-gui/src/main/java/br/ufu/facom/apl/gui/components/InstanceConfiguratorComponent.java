@@ -1,11 +1,15 @@
 package br.ufu.facom.apl.gui.components;
 
 import br.ufu.facom.apl.core.Configurable;
+import br.ufu.facom.apl.gui.components.singleton.ConfigurationPanel;
+import br.ufu.facom.apl.gui.components.singleton.VariationPanel;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,18 +45,19 @@ public class InstanceConfiguratorComponent extends JPanel {
         TitledBorder border =  BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), title);
 
-        TitledBorder borderParameters =  BorderFactory.createTitledBorder(
-                BorderFactory.createEmptyBorder(),"Parameters");
-
-        border.setTitleJustification(TitledBorder.LEFT);
-        borderParameters.setTitleJustification(TitledBorder.LEFT);
-
         this.setBorder(border);
-        this.pnlParameters.setBorder(borderParameters);
         this.cmbInstances.setFont(this.cmbInstances.getFont().deriveFont(Font.PLAIN));
         this.cmbInstances.setPrototypeDisplayValue("");
-        this.pnlParameters.setVisible(false);
-        this.pnlNominalParameters.setVisible(false);;
+
+        border =  BorderFactory.createTitledBorder(
+                BorderFactory.createEmptyBorder(), "Nominal Parameters");
+        this.pnlNominalParameters.setBorder(border);
+        this.pnlNominalParameters.setVisible(false);
+
+
+        border =  BorderFactory.createTitledBorder(
+                BorderFactory.createEmptyBorder(), "Numeric Parameters");
+        this.pnlNumericParameters.setBorder(border);
         this.pnlNumericParameters.setVisible(false);
 
     }
@@ -73,7 +78,7 @@ public class InstanceConfiguratorComponent extends JPanel {
         this.add(this.cmbInstances, c);
 
         c.weightx = 1;
-        c.weighty = 0;
+        c.weighty = 1;
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
@@ -84,17 +89,6 @@ public class InstanceConfiguratorComponent extends JPanel {
         this.pnlParameters.add(this.pnlNominalParameters, c);
 
         c.weightx = 1;
-        c.weighty = 0;
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.NORTH;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(0, 0, 0, 0);
-        this.pnlParameters.add(this.pnlNumericParameters, c);
-
-        c.weightx = 0;
         c.weighty = 1;
         c.gridx = 0;
         c.gridy = 1;
@@ -102,6 +96,17 @@ public class InstanceConfiguratorComponent extends JPanel {
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTH;
         c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(10, 0, 0, 0);
+        this.pnlParameters.add(this.pnlNumericParameters, c);
+
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.NORTH;
+        c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 0, 0, 0);
         this.add(this.pnlParameters, c);
 
@@ -119,17 +124,31 @@ public class InstanceConfiguratorComponent extends JPanel {
 
             final Object instance = this.instanceByName.get(selectedItem);
 
+            List<String> numericParameters = null;
+            List<String> nominalParameters = null;
+
             if (instance instanceof Configurable) {
 
                 final Configurable configurable = (Configurable) instance;
-                this.setNumericParameters(configurable.getNumericParametersNames());
-                this.setNominalParameters(configurable.getNominalParametersNames());
 
-                if (!this.getNumericParameterValueByName().isEmpty()
-                        || !this.getNominalParameterValueByName().isEmpty()) {
-                    this.pnlParameters.setVisible(true);
-                }
+                numericParameters = configurable.getNumericParametersNames();
+                nominalParameters = configurable.getNominalParametersNames();
             }
+
+            this.setNumericParameters(numericParameters != null ? numericParameters : new ArrayList<>());
+            this.setNominalParameters(nominalParameters != null ? nominalParameters : new ArrayList<>());
+
+            if (!this.getNumericParameterValueByName().isEmpty()) {
+                this.pnlNumericParameters.setVisible(true);
+            }
+
+            if (!this.getNominalParameterValueByName().isEmpty()) {
+                this.pnlNominalParameters.setVisible(true);
+            }
+
+            VariationPanel.getInstance().setVisible(ConfigurationPanel.getInstance().hasNumericParameters());
+            VariationPanel.getInstance().setVariateParametersList();
+
         });
 
     }
@@ -152,6 +171,7 @@ public class InstanceConfiguratorComponent extends JPanel {
         this.txtFieldByParameterName.clear();
         this.pnlNominalParameters.removeAll();
 
+
         for (int i = 0; i < parametersNames.size(); i++) {
 
             final JLabel lblParameter = new JLabel(parametersNames.get(i) + ":");
@@ -163,7 +183,7 @@ public class InstanceConfiguratorComponent extends JPanel {
             c.gridy = i;
             c.gridwidth = 1;
             c.gridheight = 1;
-            c.anchor = GridBagConstraints.WEST;
+            c.anchor = GridBagConstraints.NORTHWEST;
             c.fill = GridBagConstraints.NONE;
             c.insets = new Insets(2, 2, 2, 2);
             this.pnlNominalParameters.add(lblParameter, c);
@@ -177,8 +197,8 @@ public class InstanceConfiguratorComponent extends JPanel {
             c.gridy = i;
             c.gridwidth = 1;
             c.gridheight = 1;
-            c.anchor = GridBagConstraints.WEST;
-            c.fill = GridBagConstraints.BOTH;
+            c.anchor = GridBagConstraints.NORTHWEST;
+            c.fill = GridBagConstraints.HORIZONTAL;
             c.insets = new Insets(2, 2, 2, 2);
             this.pnlNominalParameters.add(txtFieldParameter, c);
 

@@ -122,13 +122,6 @@ public class FinderPanel extends JPanel {
                     ConfigurationPanel.getInstance().getActiveLearningStrategyConfigurator()
                             .setCmbInstances(instancesMapByClass.get(ActiveLearningStrategy.class));
 
-                    VariationPanel.getInstance().setVisible(false);
-
-                    if (ConfigurationPanel.getInstance().hasNumericParameters()) {
-                        VariationPanel.getInstance().setVisible(true);
-                        VariationPanel.getInstance().setVariateParametersList();
-                    }
-
                     final StringBuilder builder = new StringBuilder();
 
                     for (final File file : files) {
