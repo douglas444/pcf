@@ -73,7 +73,7 @@ public class MenuBar extends JMenuBar {
 
             final Interceptable interceptable = (Interceptable) ConfigurationPanel.getInstance()
                     .getInterceptableConfigurator().getSelectedInstance();
-            ;
+
             final MetaCategorizer metaCategorizer = (MetaCategorizer) ConfigurationPanel.getInstance()
                     .getMetaCategorizerConfigurator().getSelectedInstance();
             final ActiveLearningStrategy activeLearningStrategy = (ActiveLearningStrategy)

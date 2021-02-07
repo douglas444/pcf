@@ -9,9 +9,10 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class InstanceConfiguratorComponent extends JPanel {
 
@@ -135,8 +136,8 @@ public class InstanceConfiguratorComponent extends JPanel {
                 nominalParameters = configurable.getNominalParametersNames();
             }
 
-            this.setNumericParameters(numericParameters != null ? numericParameters : new ArrayList<>());
-            this.setNominalParameters(nominalParameters != null ? nominalParameters : new ArrayList<>());
+            this.setParameters(numericParameters != null ? numericParameters : new ArrayList<>(), true);
+            this.setParameters(nominalParameters != null ? nominalParameters : new ArrayList<>(), false);
 
             if (!this.getNumericParameterValueByName().isEmpty()) {
                 this.pnlNumericParameters.setVisible(true);
@@ -163,57 +164,39 @@ public class InstanceConfiguratorComponent extends JPanel {
 
     }
 
-    private void setNominalParameters(final List<String> parametersNames) {
+    private void setParameters(final List<String> parametersNames, final boolean isNumeric) {
 
-        this.pnlNominalParameters.setVisible(!parametersNames.isEmpty());
         final GridBagConstraints c = new GridBagConstraints();
+        final JPanel panel;
+        final Function<String, Component> fieldBuilder;
 
-        this.txtFieldByParameterName.clear();
-        this.pnlNominalParameters.removeAll();
+        if (isNumeric) {
 
+            panel = this.pnlNumericParameters;
+            this.spinnerByParameterName.clear();
 
-        for (int i = 0; i < parametersNames.size(); i++) {
+            fieldBuilder = (fieldName) -> {
+                final SpinnerNumberModel model = new SpinnerNumberModel(0.0, -Double.MAX_VALUE, Double.MAX_VALUE,0.1);
+                final JSpinner spinnerParameter = new JSpinner(model);
+                ((JSpinner.NumberEditor) spinnerParameter.getEditor()).getTextField().setColumns(1);
+                this.spinnerByParameterName.put(fieldName, spinnerParameter);
+                return spinnerParameter;
+            };
 
-            final JLabel lblParameter = new JLabel(parametersNames.get(i) + ":");
-            lblParameter.setFont(lblParameter.getFont().deriveFont(Font.PLAIN));
+        } else {
 
-            c.weightx = 0;
-            c.weighty = 0;
-            c.gridx = 0;
-            c.gridy = i;
-            c.gridwidth = 1;
-            c.gridheight = 1;
-            c.anchor = GridBagConstraints.NORTHWEST;
-            c.fill = GridBagConstraints.NONE;
-            c.insets = new Insets(2, 2, 2, 2);
-            this.pnlNominalParameters.add(lblParameter, c);
+            panel = this.pnlNominalParameters;
+            this.txtFieldByParameterName.clear();
 
-            final JTextField txtFieldParameter = new JTextField(1);
-            this.txtFieldByParameterName.put(parametersNames.get(i) , txtFieldParameter);
-
-            c.weightx = 1;
-            c.weighty = 0;
-            c.gridx = 1;
-            c.gridy = i;
-            c.gridwidth = 1;
-            c.gridheight = 1;
-            c.anchor = GridBagConstraints.NORTHWEST;
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.insets = new Insets(2, 2, 2, 2);
-            this.pnlNominalParameters.add(txtFieldParameter, c);
-
+            fieldBuilder = (fieldName) -> {
+                final JTextField txtFieldParameter = new JTextField(1);
+                this.txtFieldByParameterName.put(fieldName, txtFieldParameter);
+                return txtFieldParameter;
+            };
         }
 
-    }
-
-
-    private void setNumericParameters(final List<String> parametersNames) {
-
-        this.pnlNumericParameters.setVisible(!parametersNames.isEmpty());
-        final GridBagConstraints c = new GridBagConstraints();
-
-        this.spinnerByParameterName.clear();
-        this.pnlNumericParameters.removeAll();
+        panel.setVisible(!parametersNames.isEmpty());
+        panel.removeAll();
 
         for (int i = 0; i < parametersNames.size(); i++) {
 
@@ -226,15 +209,12 @@ public class InstanceConfiguratorComponent extends JPanel {
             c.gridy = i;
             c.gridwidth = 1;
             c.gridheight = 1;
-            c.anchor = GridBagConstraints.WEST;
+            c.anchor = GridBagConstraints.NORTHEAST;
             c.fill = GridBagConstraints.NONE;
             c.insets = new Insets(2, 2, 2, 2);
-            this.pnlNumericParameters.add(lblParameter, c);
+            panel.add(lblParameter, c);
 
-            final SpinnerNumberModel model = new SpinnerNumberModel(0.0, -Double.MAX_VALUE, Double.MAX_VALUE,0.1);
-            final JSpinner spinnerParameter = new JSpinner(model);
-            ((JSpinner.NumberEditor) spinnerParameter.getEditor()).getTextField().setColumns(1);
-            this.spinnerByParameterName.put(parametersNames.get(i) , spinnerParameter);
+            final Component component = fieldBuilder.apply(parametersNames.get(i));
 
             c.weightx = 1;
             c.weighty = 0;
@@ -242,10 +222,10 @@ public class InstanceConfiguratorComponent extends JPanel {
             c.gridy = i;
             c.gridwidth = 1;
             c.gridheight = 1;
-            c.anchor = GridBagConstraints.WEST;
+            c.anchor = GridBagConstraints.NORTHWEST;
             c.fill = GridBagConstraints.BOTH;
             c.insets = new Insets(2, 2, 2, 2);
-            this.pnlNumericParameters.add(spinnerParameter, c);
+            panel.add(component, c);
 
         }
 

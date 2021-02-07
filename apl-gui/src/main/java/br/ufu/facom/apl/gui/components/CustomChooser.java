@@ -21,7 +21,6 @@ public class CustomChooser extends JFileChooser implements AWTEventListener {
 
     }
 
-
     @Override
     public void approveSelection()
     {

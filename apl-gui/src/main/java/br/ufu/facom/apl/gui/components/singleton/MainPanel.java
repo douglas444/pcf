@@ -6,7 +6,6 @@ import java.awt.*;
 public class MainPanel extends JPanel {
 
     private static MainPanel instance;
-    private final double MARGIN = 0.2;
 
     private MainPanel() {
 
@@ -25,6 +24,7 @@ public class MainPanel extends JPanel {
         final GridBagConstraints c = new GridBagConstraints();
 
 
+        final double MARGIN = 0.2;
         c.weightx = MARGIN;
         c.weighty = 0;
         c.gridx = 0;

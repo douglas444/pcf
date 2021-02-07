@@ -11,9 +11,13 @@ public class GUI extends JFrame {
     private static GUI instance;
 
     private GUI() {
-
-        this.configureComponents();
-        this.arrangeComponents();
+        this.setTitle("Active Pattern Learning GUI");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(650, 500);
+        this.setResizable(true);
+        this.getContentPane().setLayout(new GridBagLayout());
+        this.setContentPane(MainPanel.getInstance());
+        this.setJMenuBar(MenuBar.getInstance());
     }
 
     public static GUI getInstance() {
@@ -23,21 +27,6 @@ public class GUI extends JFrame {
         }
         return instance;
 
-    }
-
-    private void configureComponents() {
-
-        this.setTitle("Active Pattern Learning GUI");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(650, 500);
-        this.setResizable(true);
-        this.getContentPane().setLayout(new GridBagLayout());
-
-    }
-
-    private void arrangeComponents() {
-        this.setContentPane(MainPanel.getInstance());
-        this.setJMenuBar(MenuBar.getInstance());
     }
 
 }
