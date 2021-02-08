@@ -1,7 +1,4 @@
-package br.ufu.facom.apl.gui;
-
-import br.ufu.facom.apl.gui.components.singleton.MainPanel;
-import br.ufu.facom.apl.gui.components.singleton.MenuBar;
+package br.ufu.facom.apl.gui.components.singleton;
 
 import javax.swing.*;
 import java.awt.*;

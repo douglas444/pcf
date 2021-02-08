@@ -45,8 +45,26 @@
                     <target>8</target>
                 </configuration>
             </plugin>
+<!--        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>jaxb2-maven-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+                <execution>
+                    <id>xjc</id>
+                    <goals>
+                        <goal>xjc</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <outputDirectory>target/generated-sources/jaxb</outputDirectory>
+                <packageName>br.ufu.facom.apl</packageName>
+                <schemaDirectory>src/main/resources</schemaDirectory>
+                <schemaFiles>configuration.xsd</schemaFiles>
+            </configuration>
+        </plugin>-->
         </plugins>
     </build>
-
 
 </project>

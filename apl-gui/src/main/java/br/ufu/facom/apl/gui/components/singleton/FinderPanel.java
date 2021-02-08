@@ -3,11 +3,12 @@ package br.ufu.facom.apl.gui.components.singleton;
 import br.ufu.facom.apl.core.ActiveLearningStrategy;
 import br.ufu.facom.apl.core.MetaCategorizer;
 import br.ufu.facom.apl.core.interceptor.Interceptable;
-import br.ufu.facom.apl.gui.GUI;
-import br.ufu.facom.apl.gui.Service;
-import br.ufu.facom.apl.gui.ServiceException;
-import br.ufu.facom.apl.gui.components.CustomChooser;
+import br.ufu.facom.apl.gui.components.ChooserForFileListAccessory;
 import br.ufu.facom.apl.gui.components.FileListAccessory;
+import br.ufu.facom.apl.gui.exception.ServiceException;
+import br.ufu.facom.apl.gui.persistence.Persistent;
+import br.ufu.facom.apl.gui.persistence.XMLConfiguration;
+import br.ufu.facom.apl.gui.service.ClassLoaderService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.swing.*;
@@ -15,17 +16,16 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class FinderPanel extends JPanel {
+public class FinderPanel extends JPanel implements Persistent {
 
     private static FinderPanel instance;
 
     private final JTextField txtPath;
-    private final CustomChooser chooser;
+    private final ChooserForFileListAccessory chooser;
     private final JButton btnSearch;
 
     private FinderPanel() {
@@ -34,7 +34,7 @@ public class FinderPanel extends JPanel {
 
         this.btnSearch = new JButton("...");
         this.txtPath = new JTextField(1);
-        this.chooser = new CustomChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        this.chooser = new ChooserForFileListAccessory(FileSystemView.getFileSystemView().getHomeDirectory());
 
         this.setLayout(new GridBagLayout());
         lblClasspath.setFont(lblClasspath.getFont().deriveFont(Font.PLAIN));
@@ -81,6 +81,8 @@ public class FinderPanel extends JPanel {
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(5, 5, 10, 5);
         this.add(btnSearch, c);
+
+        this.configureBehavior();
     }
 
     public static FinderPanel getInstance() {
@@ -92,17 +94,44 @@ public class FinderPanel extends JPanel {
 
     }
 
-    static {
+    @Override
+    public void reset() {
+        this.txtPath.setText("");
+        ((FileListAccessory) this.chooser.getAccessory()).getLstModel().removeAllElements();
+    }
 
-        FinderPanel.getInstance().getBtnSearch().addActionListener((event) -> {
+    @Override
+    public void load(XMLConfiguration configuration) {
 
-            if (FinderPanel.getInstance().getChooser()
-                    .showOpenDialog(GUI.getInstance()) == JFileChooser.APPROVE_OPTION) {
+        final List<File> paths = configuration.getPaths()
+                .stream()
+                .map(File::new)
+                .collect(Collectors.toList());
 
-                final FileListAccessory accessory = (FileListAccessory) FinderPanel.getInstance()
-                        .getChooser().getAccessory();
+        this.configurePaths(paths);
+
+    }
+
+    @Override
+    public void save(XMLConfiguration configuration) {
+
+        final List<String> paths = Arrays.stream(this.txtPath.getText().split(";").clone())
+                .map(path -> path.replace(" ", ""))
+                .filter(path -> !path.isEmpty())
+                .collect(Collectors.toList());
+
+        configuration.getPaths().addAll(paths);
+
+    }
+
+    private void configureBehavior() {
+
+        this.btnSearch.addActionListener((event) -> {
+
+            if (this.chooser.showOpenDialog(GUI.getInstance()) == JFileChooser.APPROVE_OPTION) {
+
+                final FileListAccessory accessory = (FileListAccessory) this.chooser.getAccessory();
                 final Enumeration<File> enumeration = accessory.getLstModel().elements();
-
                 final List<File> files = new ArrayList<>();
 
                 while (enumeration.hasMoreElements()) {
@@ -110,48 +139,41 @@ public class FinderPanel extends JPanel {
                     files.add(file);
                 }
 
-                try {
-
-                    final HashMap<Class<?>, HashMap<String, Object>> instancesMapByClass =
-                            Service.digestClasspathArray(files.toArray(new File[]{}));
-
-                    ConfigurationPanel.getInstance().getInterceptableConfigurator()
-                            .setCmbInstances(instancesMapByClass.get(Interceptable.class));
-                    ConfigurationPanel.getInstance().getMetaCategorizerConfigurator()
-                            .setCmbInstances(instancesMapByClass.get(MetaCategorizer.class));
-                    ConfigurationPanel.getInstance().getActiveLearningStrategyConfigurator()
-                            .setCmbInstances(instancesMapByClass.get(ActiveLearningStrategy.class));
-
-                    final StringBuilder builder = new StringBuilder();
-
-                    for (final File file : files) {
-                        builder.append(file.getAbsolutePath()).append("; ");
-                    }
-
-                    FinderPanel.getInstance().getTxtPath().setText(builder.toString());
-
-                } catch (ServiceException e) {
-
-                    final String message = e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
-                    JOptionPane.showMessageDialog(GUI.getInstance(), message,
-                            "Error", JOptionPane.ERROR_MESSAGE);
-
-                }
-
+                this.configurePaths(files);
             }
 
         });
+
     }
 
-    public JTextField getTxtPath() {
-        return txtPath;
-    }
+    private void configurePaths(final List<File> paths) {
 
-    public CustomChooser getChooser() {
-        return chooser;
-    }
+        try {
 
-    public JButton getBtnSearch() {
-        return btnSearch;
+            final HashMap<Class<?>, HashMap<String, Object>> instancesMapByClass =
+                    ClassLoaderService.digestClasspathArray(paths.toArray(new File[]{}));
+
+            ConfigurationPanel.getInstance().getInterceptableConfigurator()
+                    .setCmbInstances(instancesMapByClass.get(Interceptable.class));
+            ConfigurationPanel.getInstance().getMetaCategorizerConfigurator()
+                    .setCmbInstances(instancesMapByClass.get(MetaCategorizer.class));
+            ConfigurationPanel.getInstance().getActiveLearningStrategyConfigurator()
+                    .setCmbInstances(instancesMapByClass.get(ActiveLearningStrategy.class));
+
+            final StringBuilder builder = new StringBuilder();
+
+            for (final File file : paths) {
+                builder.append(file.getAbsolutePath()).append("; ");
+            }
+
+            this.txtPath.setText(builder.toString());
+
+        } catch (ServiceException e) {
+
+            final String message = e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
+            JOptionPane.showMessageDialog(GUI.getInstance(), message,
+                    "Error", JOptionPane.ERROR_MESSAGE);
+
+        }
     }
 }

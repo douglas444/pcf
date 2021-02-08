@@ -1,8 +1,9 @@
-package br.ufu.facom.apl.gui;
+package br.ufu.facom.apl.gui.service;
 
 import br.ufu.facom.apl.core.ActiveLearningStrategy;
 import br.ufu.facom.apl.core.MetaCategorizer;
 import br.ufu.facom.apl.core.interceptor.Interceptable;
+import br.ufu.facom.apl.gui.exception.ServiceException;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class Service {
+public class ClassLoaderService {
 
     public static HashMap<Class<?>, HashMap<String, Object>> digestClasspathArray(final File[] classpathArray)
             throws ServiceException {

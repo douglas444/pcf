@@ -1,36 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:element name="configuration" type="configurationType"/>
+    <xs:element name="configuration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" maxOccurs="unbounded" name="paths"/>
+                <xs:element type="xs:string" name="interceptableClassName"/>
+                <xs:element type="xs:string" name="metaCategorizerClassName"/>
+                <xs:element type="xs:string" name="activeLearningStrategyClassName"/>
+                <xs:element type="nominalParameterValue" maxOccurs="unbounded" name="interceptableNominalParameters"/>
+                <xs:element type="numericParameterValue" maxOccurs="unbounded" name="interceptableNumericParameters"/>
+                <xs:element type="nominalParameterValue" maxOccurs="unbounded" name="metaCategorizerNominalParameters"/>
+                <xs:element type="numericParameterValue" maxOccurs="unbounded" name="metaCategorizerNumericParameters"/>
+                <xs:element type="nominalParameterValue" maxOccurs="unbounded" name="activeLearningStrategyNominalParameters"/>
+                <xs:element type="numericParameterValue" maxOccurs="unbounded" name="activeLearningStrategyNumericParameters"/>
+                <xs:element type="xs:boolean" name="multipleExecutions"/>
+                <xs:element type="xs:string" name="variableParameterName" nillable="true"/>
+                <xs:element name="variableParameterType" nillable="true">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Interceptable"/>
+                            <xs:enumeration value="MetaCategorizer"/>
+                            <xs:enumeration value="ActiveLearningStrategy"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element type="xs:double" name="variationIncrement"/>
+                <xs:element type="xs:int" name="variationTimes"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
-    <xs:complexType name="pathListType">
+    <xs:complexType name="nominalParameterValue">
         <xs:sequence>
-            <xs:element type="xs:string" maxOccurs="unbounded" name="path"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="parameterListType">
-        <xs:sequence>
-            <xs:element type="parameterType" minOccurs="0" maxOccurs="unbounded" name="parameter"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="parameterType">
-        <xs:sequence>
-            <xs:element type="xs:string" name="name"/>
+            <xs:element type="xs:string" name="parameterName"/>
             <xs:element type="xs:string" name="value"/>
-            <xs:element type="xs:double" name="increment"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="configurationType">
+    <xs:complexType name="numericParameterValue">
         <xs:sequence>
-            <xs:element type="xs:int" name="numberOfExecutions"/>
-            <xs:element type="pathListType" name="classpathFoldersAndJars"/>
-            <xs:element type="parameterListType" name="interceptableParameters"/>
-            <xs:element type="parameterListType" name="metaCategorizerParameters"/>
-            <xs:element type="parameterListType" name="activeLeaningStrategyParameters"/>
+            <xs:element type="xs:string" name="parameterName"/>
+            <xs:element type="xs:double" name="value"/>
         </xs:sequence>
     </xs:complexType>
+
 
 </xs:schema>

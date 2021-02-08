@@ -1,8 +1,10 @@
 package br.ufu.facom.apl.gui.components;
 
 import br.ufu.facom.apl.core.Configurable;
+import br.ufu.facom.apl.gui.components.singleton.GUI;
 import br.ufu.facom.apl.gui.components.singleton.ConfigurationPanel;
 import br.ufu.facom.apl.gui.components.singleton.VariationPanel;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -12,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class InstanceConfiguratorComponent extends JPanel {
 
@@ -136,19 +137,22 @@ public class InstanceConfiguratorComponent extends JPanel {
                 nominalParameters = configurable.getNominalParametersNames();
             }
 
-            this.setParameters(numericParameters != null ? numericParameters : new ArrayList<>(), true);
-            this.setParameters(nominalParameters != null ? nominalParameters : new ArrayList<>(), false);
-
-            if (!this.getNumericParameterValueByName().isEmpty()) {
-                this.pnlNumericParameters.setVisible(true);
+            if (numericParameters == null) {
+                this.setParameters(new ArrayList<>(), true);
+            } else {
+                this.setParameters(numericParameters, true);
             }
 
-            if (!this.getNominalParameterValueByName().isEmpty()) {
-                this.pnlNominalParameters.setVisible(true);
+            if (nominalParameters == null) {
+                this.setParameters(new ArrayList<>(), false);
+            } else {
+                this.setParameters(nominalParameters, false);
             }
 
+            this.pnlNumericParameters.setVisible(!this.getNumericParameterValueByName().isEmpty());
+            this.pnlNominalParameters.setVisible(!this.getNominalParameterValueByName().isEmpty());
             VariationPanel.getInstance().setVisible(ConfigurationPanel.getInstance().hasNumericParameters());
-            VariationPanel.getInstance().setVariateParametersList();
+            VariationPanel.getInstance().setVariableParametersList();
 
         });
 
@@ -176,10 +180,14 @@ public class InstanceConfiguratorComponent extends JPanel {
             this.spinnerByParameterName.clear();
 
             fieldBuilder = (fieldName) -> {
-                final SpinnerNumberModel model = new SpinnerNumberModel(0.0, -Double.MAX_VALUE, Double.MAX_VALUE,0.1);
+
+                final SpinnerNumberModel model = new SpinnerNumberModel(0.0, -Double.MAX_VALUE,
+                        Double.MAX_VALUE,0.1);
+
                 final JSpinner spinnerParameter = new JSpinner(model);
                 ((JSpinner.NumberEditor) spinnerParameter.getEditor()).getTextField().setColumns(1);
                 this.spinnerByParameterName.put(fieldName, spinnerParameter);
+
                 return spinnerParameter;
             };
 
@@ -250,9 +258,59 @@ public class InstanceConfiguratorComponent extends JPanel {
 
         final HashMap<String, Double> parameterValueByName = new HashMap<>();
         this.spinnerByParameterName.forEach((parameterName, spinner) -> {
+            try {
+                spinner.commitEdit();
+            } catch (Exception e) {
+
+                final String message = "Invalid value for '" + parameterName
+                        + "' parameter. Reverting to previous value."
+                        + "\n    " + e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
+
+                JOptionPane.showMessageDialog(GUI.getInstance(), message,
+                        "Error", JOptionPane.ERROR_MESSAGE);
+
+                spinner.setValue(spinner.getPreviousValue());
+
+            }
             parameterValueByName.put(parameterName, ((Double) spinner.getValue()));
         });
         return parameterValueByName;
+
+    }
+
+    public String getSelectedItem() {
+        return (String) this.cmbInstances.getSelectedItem();
+    }
+
+    public void setSelectedItem(final String selectedItem) {
+        this.cmbInstances.setSelectedItem(selectedItem);
+    }
+
+    public void reset() {
+        this.pnlNumericParameters.setVisible(false);
+        this.pnlNominalParameters.setVisible(false);
+        this.pnlNumericParameters.removeAll();
+        this.pnlNominalParameters.removeAll();
+        this.cmbInstances.removeAllItems();
+        this.txtFieldByParameterName.clear();
+        this.spinnerByParameterName.clear();
+        this.instanceByName.clear();
+    }
+
+    public void load(final HashMap<String, String> valueByNominalParameterName,
+                     final HashMap<String, Double> valueByNumericParameterName) {
+
+        valueByNominalParameterName.forEach((key, value) -> {
+            if (this.txtFieldByParameterName.containsKey(key)) {
+                this.txtFieldByParameterName.get(key).setText(value);
+            }
+        });
+
+        valueByNumericParameterName.forEach((key, value) -> {
+            if (this.spinnerByParameterName.containsKey(key)) {
+                this.spinnerByParameterName.get(key).setValue(value);
+            }
+        });
 
     }
 }

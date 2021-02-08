@@ -12,7 +12,7 @@ public class FileListAccessory extends JComponent implements PropertyChangeListe
     private final DefaultListModel<File> lstModel;
     private final JList<File> lstSelectedFiles;
 
-    public FileListAccessory(final CustomChooser chooser) {
+    public FileListAccessory(final ChooserForFileListAccessory chooser) {
 
         chooser.addPropertyChangeListener(this);
 

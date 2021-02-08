@@ -3,9 +3,15 @@ package br.ufu.facom.apl.gui.components.singleton;
 import br.ufu.facom.apl.core.ActiveLearningStrategy;
 import br.ufu.facom.apl.core.MetaCategorizer;
 import br.ufu.facom.apl.core.interceptor.Interceptable;
+import br.ufu.facom.apl.gui.persistence.XMLConfiguration;
+import br.ufu.facom.apl.gui.components.ChooserWithReplaceWarning;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.swing.*;
-
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
 public class MenuBar extends JMenuBar {
 
     private static MenuBar instance;
@@ -42,6 +48,8 @@ public class MenuBar extends JMenuBar {
         this.add(menuRun);
         this.add(menuHelp);
 
+        this.configureBehavior();
+
     }
 
     public static MenuBar getInstance() {
@@ -53,21 +61,80 @@ public class MenuBar extends JMenuBar {
 
     }
 
-    static {
+    private void configureBehavior() {
 
-        MenuBar.getInstance().getItemExit().addActionListener((event) -> {
-
-        });
-
-        MenuBar.getInstance().getItemLoad().addActionListener((event) -> {
+        this.itemExit.addActionListener((event) -> {
 
         });
 
-        MenuBar.getInstance().getItemNew().addActionListener((event) -> {
+        this.itemLoad.addActionListener((event) -> {
+
+            final JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Load");
+
+            if (fileChooser.showOpenDialog(GUI.getInstance()) == JFileChooser.APPROVE_OPTION) {
+
+                try {
+
+                    final File f = fileChooser.getSelectedFile();
+                    final JAXBContext jaxbContext = JAXBContext.newInstance(XMLConfiguration.class);
+                    final Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+                    final XMLConfiguration configuration = (XMLConfiguration) jaxbUnmarshaller.unmarshal(f);
+
+                    FinderPanel.getInstance().load(configuration);
+                    ConfigurationPanel.getInstance().load(configuration);
+                    VariationPanel.getInstance().load(configuration);
+
+                } catch (Exception e) {
+                    final String message = e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
+                    JOptionPane.showMessageDialog(GUI.getInstance(), message,
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        this.itemSave.addActionListener((event) -> {
+
+            final XMLConfiguration configuration = new XMLConfiguration();
+
+            FinderPanel.getInstance().save(configuration);
+            ConfigurationPanel.getInstance().save(configuration);
+            VariationPanel.getInstance().save(configuration);
+
+            try{
+
+                final JFileChooser fileChooser = new ChooserWithReplaceWarning();
+                fileChooser.setSelectedFile(new File("apl-config.xml"));
+                fileChooser.setDialogTitle("Save");
+
+                if (fileChooser.showSaveDialog(GUI.getInstance()) == JFileChooser.APPROVE_OPTION) {
+
+                    final JAXBContext jaxbContext = JAXBContext.newInstance(XMLConfiguration.class);
+                    final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+                    jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                    jaxbMarshaller.marshal(configuration, fileChooser.getSelectedFile());
+
+                    JOptionPane.showMessageDialog(null, "File saved", null,
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            } catch (Exception e) {
+                final String message = e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
+                JOptionPane.showMessageDialog(GUI.getInstance(), message,
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
 
         });
 
-        MenuBar.getInstance().getItemRun().addActionListener((event) -> {
+        this.itemNew.addActionListener((event) -> {
+
+            FinderPanel.getInstance().reset();
+            ConfigurationPanel.getInstance().reset();
+            VariationPanel.getInstance().reset();
+
+        });
+
+        this.itemRun.addActionListener((event) -> {
 
             FooterPanel.getInstance().setVisible(true);
 
@@ -99,57 +166,16 @@ public class MenuBar extends JMenuBar {
 
         });
 
-        MenuBar.getInstance().getItemSave().addActionListener((event) -> {
 
-
-        });
-
-        MenuBar.getInstance().getItemStop().addActionListener((event) -> {
+        this.itemStop.addActionListener((event) -> {
 
         });
 
-        MenuBar.getInstance().getMenuFile().addActionListener((event) -> {
-
+        this.menuFile.addActionListener((event) -> {
         });
 
-        MenuBar.getInstance().getMenuHelp().addActionListener((event) -> {
-
+        this.menuRun.addActionListener((event) -> {
         });
-    }
 
-    public JMenuItem getItemRun() {
-        return itemRun;
-    }
-
-    public JMenuItem getItemStop() {
-        return itemStop;
-    }
-
-    public JMenuItem getItemNew() {
-        return itemNew;
-    }
-
-    public JMenuItem getItemLoad() {
-        return itemLoad;
-    }
-
-    public JMenuItem getItemSave() {
-        return itemSave;
-    }
-
-    public JMenuItem getItemExit() {
-        return itemExit;
-    }
-
-    public JMenu getMenuFile() {
-        return menuFile;
-    }
-
-    public JMenu getMenuHelp() {
-        return menuHelp;
-    }
-
-    public JMenu getMenuRun() {
-        return menuRun;
     }
 }

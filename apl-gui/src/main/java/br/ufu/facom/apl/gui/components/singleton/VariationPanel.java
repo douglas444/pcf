@@ -1,5 +1,12 @@
 package br.ufu.facom.apl.gui.components.singleton;
 
+import br.ufu.facom.apl.core.ActiveLearningStrategy;
+import br.ufu.facom.apl.core.MetaCategorizer;
+import br.ufu.facom.apl.core.interceptor.Interceptable;
+import br.ufu.facom.apl.gui.persistence.Persistent;
+import br.ufu.facom.apl.gui.persistence.XMLConfiguration;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -8,25 +15,29 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VariationPanel extends JPanel {
+public class VariationPanel extends JPanel implements Persistent {
 
     private static VariationPanel instance;
 
     private final JRadioButton rbUnique;
     private final JRadioButton rbMultiple;
-    private final JPanel pnlVariateParameter;
+    private final JPanel pnlVariableParameter;
     private final JPanel pnlVariationBorder;
     private final ButtonGroup bgRadioParameter;
     private final JSpinner spinnerIncrement;
     private final JSpinner spinnerTimes;
-    private final List<JRadioButton> radioButtonParameters;
+    private final List<JRadioButton> radioButtonInterceptableParameters;
+    private final List<JRadioButton> radioButtonMetaCategorizerParameters;
+    private final List<JRadioButton> radioButtonActiveLearningStrategyParameters;
 
     private VariationPanel() {
 
-        this.radioButtonParameters = new ArrayList<>();
+        this.radioButtonInterceptableParameters = new ArrayList<>();
+        this.radioButtonMetaCategorizerParameters = new ArrayList<>();
+        this.radioButtonActiveLearningStrategyParameters = new ArrayList<>();
         this.rbUnique = new JRadioButton("Unique");
         this.rbMultiple = new JRadioButton("Multiple");
-        this.pnlVariateParameter = new JPanel(new GridBagLayout());
+        this.pnlVariableParameter = new JPanel(new GridBagLayout());
         this.pnlVariationBorder = new JPanel(new GridBagLayout());
         this.bgRadioParameter = new ButtonGroup();
         this.spinnerIncrement = new JSpinner(new SpinnerNumberModel(0.0, -Double.MAX_VALUE, Double.MAX_VALUE,0.1));
@@ -101,9 +112,9 @@ public class VariationPanel extends JPanel {
         this.add(pnlExecution, c);
 
         border = BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Variate parameter");
+                BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Variable parameter");
 
-        this.pnlVariateParameter.setBorder(border);
+        this.pnlVariableParameter.setBorder(border);
 
         c.weightx = 0.666;
         c.weighty = 1;
@@ -114,7 +125,7 @@ public class VariationPanel extends JPanel {
         c.anchor = GridBagConstraints.NORTH;
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(5, 5, 5, 5);
-        pnlExecution.add(this.pnlVariateParameter, c);
+        pnlExecution.add(this.pnlVariableParameter, c);
 
         final JLabel lblIncrement = new JLabel("Increment:");
         lblIncrement.setFont(lblIncrement.getFont().deriveFont(Font.PLAIN));
@@ -190,10 +201,12 @@ public class VariationPanel extends JPanel {
         c.insets = new Insets(5, 5, 5, 5);
         pnlExecution.add(pnlVariationBorder, c);
 
-        this.pnlVariateParameter.setVisible(false);
+        this.pnlVariableParameter.setVisible(false);
         this.pnlVariationBorder.setVisible(false);
         this.setVisible(false);
         this.rbUnique.setSelected(true);
+
+        this.configureBehavior();
     }
 
     public static VariationPanel getInstance() {
@@ -205,11 +218,16 @@ public class VariationPanel extends JPanel {
 
     }
 
-    public void setVariateParametersList() {
+    public void setVariableParametersList() {
 
-        this.pnlVariateParameter.removeAll();
-        this.radioButtonParameters.forEach(this.bgRadioParameter::remove);
-        this.radioButtonParameters.clear();
+        this.pnlVariableParameter.removeAll();
+
+        this.radioButtonInterceptableParameters.forEach(this.bgRadioParameter::remove);
+        this.radioButtonInterceptableParameters.clear();
+        this.radioButtonMetaCategorizerParameters.forEach(this.bgRadioParameter::remove);
+        this.radioButtonMetaCategorizerParameters.clear();
+        this.radioButtonActiveLearningStrategyParameters.forEach(this.bgRadioParameter::remove);
+        this.radioButtonActiveLearningStrategyParameters.clear();
 
         final List<String> interceptableParametersNames = new ArrayList<>(ConfigurationPanel.getInstance()
                 .getInterceptableConfigurator().getNumericParameterValueByName().keySet());
@@ -231,8 +249,8 @@ public class VariationPanel extends JPanel {
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(10, 0, 0, 0);
-        this.pnlVariateParameter.add(
-                setVariateParametersList(interceptableParametersNames, "Interceptor"), c);
+        this.pnlVariableParameter.add(
+                setVariableParametersList(interceptableParametersNames, Interceptable.class), c);
 
         c.weightx = 1;
         c.weighty = 0;
@@ -243,8 +261,8 @@ public class VariationPanel extends JPanel {
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(10, 0, 0, 0);
-        this.pnlVariateParameter.add(
-                setVariateParametersList(metaCategorizerParametersNames, "MetaCategorizer"), c);
+        this.pnlVariableParameter.add(
+                setVariableParametersList(metaCategorizerParametersNames, MetaCategorizer.class), c);
 
         c.weightx = 1;
         c.weighty = 0;
@@ -255,22 +273,26 @@ public class VariationPanel extends JPanel {
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(10, 0, 0, 0);
-        this.pnlVariateParameter.add(
-                setVariateParametersList(activeLearningStrategyParametersNames, "Active Learning Strategy"), c);
+        this.pnlVariableParameter.add(
+                setVariableParametersList(activeLearningStrategyParametersNames, ActiveLearningStrategy.class), c);
 
-        if (!this.radioButtonParameters.isEmpty()) {
-            this.radioButtonParameters.get(0).setSelected(true);
+        if (!this.radioButtonInterceptableParameters.isEmpty()) {
+            this.radioButtonInterceptableParameters.get(0).setSelected(true);
+        } else if (!this.radioButtonMetaCategorizerParameters.isEmpty()) {
+            this.radioButtonMetaCategorizerParameters.get(0).setSelected(true);
+        } else if (!this.radioButtonActiveLearningStrategyParameters.isEmpty()) {
+            this.radioButtonActiveLearningStrategyParameters.get(0).setSelected(true);
         }
 
     }
 
-    private JPanel setVariateParametersList(final List<String> parametersNames, final String title) {
+    private JPanel setVariableParametersList(final List<String> parametersNames, final Class<?> clazz) {
 
         final GridBagConstraints c = new GridBagConstraints();
         final JPanel pnlRadioSection = new JPanel(new GridBagLayout());
 
         TitledBorder border = BorderFactory.createTitledBorder(
-                BorderFactory.createEmptyBorder(), title);
+                BorderFactory.createEmptyBorder(), clazz.getSimpleName());
 
         pnlRadioSection.setBorder(border);
 
@@ -278,6 +300,16 @@ public class VariationPanel extends JPanel {
 
             final JRadioButton radio = new JRadioButton(parametersNames.get(i));
             radio.setFont(radio.getFont().deriveFont(Font.PLAIN));
+
+            this.bgRadioParameter.add(radio);
+
+            if (clazz.equals(Interceptable.class)) {
+                this.radioButtonInterceptableParameters.add(radio);
+            } else if (clazz.equals(MetaCategorizer.class)) {
+                this.radioButtonMetaCategorizerParameters.add(radio);
+            } else {
+                this.radioButtonActiveLearningStrategyParameters.add(radio);
+            }
 
             c.weightx = 0;
             c.weighty = 0;
@@ -289,8 +321,6 @@ public class VariationPanel extends JPanel {
             c.fill = GridBagConstraints.NONE;
             c.insets = new Insets(0, 0, 0, 0);
             pnlRadioSection.add(radio, c);
-            this.bgRadioParameter.add(radio);
-            this.radioButtonParameters.add(radio);
 
         }
 
@@ -300,48 +330,112 @@ public class VariationPanel extends JPanel {
 
     }
 
-    public JRadioButton getRbUnique() {
-        return rbUnique;
+    @Override
+    public void reset() {
+
+        this.setVisible(false);
+        this.pnlVariableParameter.setVisible(false);
+        this.pnlVariationBorder.setVisible(false);
+        this.rbUnique.setSelected(true);
+        this.rbMultiple.setSelected(false);
+        this.radioButtonInterceptableParameters.clear();
+        this.radioButtonMetaCategorizerParameters.clear();
+        this.radioButtonActiveLearningStrategyParameters.clear();
+        this.spinnerIncrement.setValue(0);
+        this.spinnerTimes.setValue(0);
+
     }
 
-    public JRadioButton getRbMultiple() {
-        return rbMultiple;
+    @Override
+    public void load(XMLConfiguration configuration) {
+
+        this.rbUnique.setSelected(!configuration.isMultipleExecutions());
+        this.rbMultiple.setSelected(configuration.isMultipleExecutions());
+        this.pnlVariableParameter.setVisible(configuration.isMultipleExecutions());
+        this.pnlVariationBorder.setVisible(configuration.isMultipleExecutions());
+
+        final List<JRadioButton> radioButtons;
+
+        if (Interceptable.class.getSimpleName().equals(configuration.getVariableParameterType())) {
+            radioButtons = radioButtonInterceptableParameters;
+        } else if (MetaCategorizer.class.getSimpleName().equals(configuration.getVariableParameterType())) {
+            radioButtons = radioButtonMetaCategorizerParameters;
+        } else {
+            radioButtons = radioButtonActiveLearningStrategyParameters;
+        }
+
+        radioButtons.stream()
+                .filter(radioButton -> radioButton.getText().equals(configuration.getVariableParameterName()))
+                .findAny()
+                .ifPresent(radioButton -> radioButton.setSelected(true));
+
+        this.spinnerIncrement.setValue(configuration.getVariationIncrement());
+        this.spinnerTimes.setValue(configuration.getVariationTimes());
+
     }
 
-    public JPanel getPnlVariateParameter() {
-        return pnlVariateParameter;
+    @Override
+    public void save(XMLConfiguration configuration) {
+
+        configuration.setMultipleExecutions(this.rbMultiple.isSelected());
+
+        this.radioButtonInterceptableParameters.stream()
+                .filter(AbstractButton::isSelected).findAny().ifPresent((btnRadio) -> {
+                    configuration.setVariableParameterName(btnRadio.getText());
+                    configuration.setVariableParameterType(Interceptable.class.getSimpleName());
+                });
+
+        this.radioButtonMetaCategorizerParameters.stream()
+                .filter(AbstractButton::isSelected).findAny().ifPresent((btnRadio) -> {
+                    configuration.setVariableParameterName(btnRadio.getText());
+                    configuration.setVariableParameterType(MetaCategorizer.class.getSimpleName());
+                });
+
+        this.radioButtonActiveLearningStrategyParameters.stream()
+                .filter(AbstractButton::isSelected).findAny().ifPresent((btnRadio) -> {
+                    configuration.setVariableParameterName(btnRadio.getText());
+                    configuration.setVariableParameterType(ActiveLearningStrategy.class.getSimpleName());
+                });
+
+        try {
+            this.spinnerIncrement.commitEdit();
+        } catch (Exception e) {
+
+            final String message = "Invalid value for Variation's 'increment' field. Reverting to previous value."
+                    + "\n    " + e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
+
+            JOptionPane.showMessageDialog(GUI.getInstance(), message,
+                    "Error", JOptionPane.ERROR_MESSAGE);
+
+            this.spinnerIncrement.setValue(this.spinnerIncrement.getPreviousValue());
+        }
+
+        try {
+            this.spinnerTimes.commitEdit();
+        } catch (Exception e) {
+
+            final String message = "Invalid value for Variation's 'times' field. Reverting to previous value."
+                    + "\n    " + e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
+            JOptionPane.showMessageDialog(GUI.getInstance(), message,
+                    "Error", JOptionPane.ERROR_MESSAGE);
+
+            this.spinnerTimes.setValue(this.spinnerTimes.getPreviousValue());
+
+        }
+
+        configuration.setVariationIncrement((Double) this.spinnerIncrement.getValue());
+        configuration.setVariationTimes((Integer) this.spinnerTimes.getValue());
+
     }
 
-    public JPanel getPnlVariationBorder() {
-        return pnlVariationBorder;
-    }
-
-    public JSpinner getSpinnerIncrement() {
-        return spinnerIncrement;
-    }
-
-    public JSpinner getSpinnerTimes() {
-        return spinnerTimes;
-    }
-
-    public List<JRadioButton> getRadioButtonParameters() {
-        return radioButtonParameters;
-    }
-
-    static {
+    private void configureBehavior() {
 
         final ActionListener typeExecutionChange = (e) -> {
-            if (VariationPanel.getInstance().getRbUnique().isSelected()) {
-                VariationPanel.getInstance().getPnlVariateParameter().setVisible(false);
-                VariationPanel.getInstance().getPnlVariationBorder().setVisible(false);
-            } else {
-                VariationPanel.getInstance().getPnlVariateParameter().setVisible(true);
-                VariationPanel.getInstance().getPnlVariationBorder().setVisible(true);
-            }
+            this.pnlVariableParameter.setVisible(!this.rbUnique.isSelected());
+            this.pnlVariationBorder.setVisible(!this.rbUnique.isSelected());
         };
 
-        VariationPanel.getInstance().getRbUnique().addActionListener(typeExecutionChange);
-        VariationPanel.getInstance().getRbMultiple().addActionListener(typeExecutionChange);
+        this.rbUnique.addActionListener(typeExecutionChange);
+        this.rbMultiple.addActionListener(typeExecutionChange);
     }
-
 }
