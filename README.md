@@ -1,1 +1,1 @@
-# pattern meta categorization
+# pattern categorization framework
