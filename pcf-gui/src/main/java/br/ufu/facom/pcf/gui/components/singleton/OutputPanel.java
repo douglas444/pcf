@@ -64,6 +64,7 @@ public class OutputPanel extends JPanel {
 
         this.add(scrollPane, BorderLayout.CENTER);
         System.setOut(new PrintStream(new TextAreaOutputStream(txtArea)));
+        System.setErr(new PrintStream(new TextAreaOutputStream(txtArea)));
 
     }
 

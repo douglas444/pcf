@@ -140,6 +140,7 @@ public class InstanceConfiguratorComponent extends JPanel {
             } else {
                 this.setParameters(numericParameters, true);
                 final Configurable configurable = (Configurable) instance;
+
                 configurable.getNumericParameters().forEach((key, value) -> {
                     this.spinnerByParameterName.get(key).setValue(value);
                 });
@@ -150,6 +151,7 @@ public class InstanceConfiguratorComponent extends JPanel {
             } else {
                 this.setParameters(nominalParameters, false);
                 final Configurable configurable = (Configurable) instance;
+
                 configurable.getNominalParameters().forEach((key, value) -> {
                     this.txtFieldByParameterName.get(key).setText(value);
                 });
@@ -157,6 +159,7 @@ public class InstanceConfiguratorComponent extends JPanel {
 
             this.pnlNumericParameters.setVisible(!this.getNumericParameterValueByName().isEmpty());
             this.pnlNominalParameters.setVisible(!this.getNominalParameterValueByName().isEmpty());
+
             VariationPanel.getInstance().setVisible(ConfigurationPanel.getInstance().hasNumericParameters());
             VariationPanel.getInstance().setVariableParametersList();
 
@@ -211,6 +214,8 @@ public class InstanceConfiguratorComponent extends JPanel {
 
         panel.setVisible(!parametersNames.isEmpty());
         panel.removeAll();
+        panel.revalidate();
+        panel.repaint();
 
         for (int i = 0; i < parametersNames.size(); i++) {
 
@@ -293,10 +298,18 @@ public class InstanceConfiguratorComponent extends JPanel {
     }
 
     public void reset() {
+
         this.pnlNumericParameters.setVisible(false);
         this.pnlNominalParameters.setVisible(false);
+
         this.pnlNumericParameters.removeAll();
+        this.pnlNumericParameters.revalidate();
+        this.pnlNumericParameters.repaint();
+
         this.pnlNominalParameters.removeAll();
+        this.pnlNominalParameters.revalidate();
+        this.pnlNominalParameters.repaint();
+
         this.cmbInstances.removeAllItems();
         this.txtFieldByParameterName.clear();
         this.spinnerByParameterName.clear();

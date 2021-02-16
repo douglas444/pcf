@@ -1,9 +1,6 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
-import br.ufu.facom.pcf.core.Application;
-import br.ufu.facom.pcf.core.HighLevelCategorizer;
-import br.ufu.facom.pcf.core.Interceptable;
-import br.ufu.facom.pcf.core.LowLevelCategorizer;
+import br.ufu.facom.pcf.core.*;
 import br.ufu.facom.pcf.gui.persistence.XMLConfiguration;
 import br.ufu.facom.pcf.gui.components.ChooserWithReplaceWarning;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -138,10 +135,53 @@ public class MenuBar extends JMenuBar {
         this.itemRun.addActionListener((event) -> {
 
             FooterPanel.getInstance().setVisible(true);
-            Application.execute(
-                    (Interceptable) ConfigurationPanel.getInstance().getInterceptableConfigurator().getSelectedInstance(),
-                    (HighLevelCategorizer) ConfigurationPanel.getInstance().getHighLevelCategorizerConfigurator().getSelectedInstance(),
-                    (LowLevelCategorizer) ConfigurationPanel.getInstance().getLowLevelCategorizerConfigurator().getSelectedInstance());
+
+            final Interceptable interceptable = (Interceptable) ConfigurationPanel.getInstance().
+                    getInterceptableConfigurator().getSelectedInstance();
+
+            final HighLevelCategorizer highLevelCategorizer = (HighLevelCategorizer) ConfigurationPanel.getInstance()
+                    .getHighLevelCategorizerConfigurator().getSelectedInstance();
+
+            final LowLevelCategorizer lowLevelCategorizer = (LowLevelCategorizer) ConfigurationPanel.getInstance()
+                    .getLowLevelCategorizerConfigurator().getSelectedInstance();
+
+            ((Configurable) interceptable).getNominalParameters().putAll(
+                    ConfigurationPanel
+                            .getInstance()
+                            .getInterceptableConfigurator()
+                            .getNominalParameterValueByName());
+
+            ((Configurable) interceptable).getNumericParameters().putAll(
+                    ConfigurationPanel
+                            .getInstance()
+                            .getInterceptableConfigurator()
+                            .getNumericParameterValueByName());
+
+            ((Configurable) highLevelCategorizer).getNominalParameters().putAll(
+                    ConfigurationPanel
+                            .getInstance()
+                            .getHighLevelCategorizerConfigurator()
+                            .getNominalParameterValueByName());
+
+            ((Configurable) highLevelCategorizer).getNumericParameters().putAll(
+                    ConfigurationPanel
+                            .getInstance()
+                            .getHighLevelCategorizerConfigurator()
+                            .getNumericParameterValueByName());
+
+            ((Configurable) lowLevelCategorizer).getNominalParameters().putAll(
+                    ConfigurationPanel
+                            .getInstance()
+                            .getLowLevelCategorizerConfigurator()
+                            .getNominalParameterValueByName());
+
+            ((Configurable) lowLevelCategorizer).getNumericParameters().putAll(
+                    ConfigurationPanel
+                            .getInstance()
+                            .getLowLevelCategorizerConfigurator()
+                            .getNumericParameterValueByName());
+
+            Application.execute(interceptable, highLevelCategorizer, lowLevelCategorizer);
             FooterPanel.getInstance().setVisible(false);
 
         });

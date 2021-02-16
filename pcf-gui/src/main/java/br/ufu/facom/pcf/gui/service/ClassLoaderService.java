@@ -68,11 +68,20 @@ public class ClassLoaderService {
                     }
 
                     if (instance instanceof Interceptable) {
-                        instancesMapByClass.get(Interceptable.class).put(className, instance);
+
+                        instancesMapByClass.get(Interceptable.class)
+                                .put(instance.getClass().getSimpleName(), instance);
+
                     } else if (instance instanceof HighLevelCategorizer) {
-                        instancesMapByClass.get(HighLevelCategorizer.class).put(className, instance);
+
+                        instancesMapByClass.get(HighLevelCategorizer.class)
+                                .put(instance.getClass().getSimpleName(), instance);
+
                     } else if (instance instanceof LowLevelCategorizer) {
-                        instancesMapByClass.get(LowLevelCategorizer.class).put(className, instance);
+
+                        instancesMapByClass.get(LowLevelCategorizer.class)
+                                .put(instance.getClass().getSimpleName(), instance);
+
                     }
 
                 }

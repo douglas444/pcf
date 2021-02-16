@@ -221,6 +221,8 @@ public class VariationPanel extends JPanel implements Persistent {
     public void setVariableParametersList() {
 
         this.pnlVariableParameter.removeAll();
+        this.pnlVariableParameter.revalidate();
+        this.pnlVariableParameter.repaint();
 
         this.radioButtonInterceptableParameters.forEach(this.bgRadioParameter::remove);
         this.radioButtonInterceptableParameters.clear();
@@ -247,7 +249,7 @@ public class VariationPanel extends JPanel implements Persistent {
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
-        c.fill = GridBagConstraints.NONE;
+        c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 0, 0, 0);
         this.pnlVariableParameter.add(
                 setVariableParametersList(interceptableParametersNames, Interceptable.class), c);
@@ -259,7 +261,7 @@ public class VariationPanel extends JPanel implements Persistent {
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
-        c.fill = GridBagConstraints.NONE;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(10, 0, 0, 0);
         this.pnlVariableParameter.add(
                 setVariableParametersList(highLevelCategorizerParametersNames, HighLevelCategorizer.class), c);
@@ -271,7 +273,7 @@ public class VariationPanel extends JPanel implements Persistent {
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
-        c.fill = GridBagConstraints.NONE;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(10, 0, 0, 0);
         this.pnlVariableParameter.add(
                 setVariableParametersList(lowLevelCategorizerParametersNames, LowLevelCategorizer.class), c);
@@ -311,7 +313,7 @@ public class VariationPanel extends JPanel implements Persistent {
                 this.radioButtonLowLevelCategorizerParameters.add(radio);
             }
 
-            c.weightx = 0;
+            c.weightx = 1;
             c.weighty = 0;
             c.gridx = 0;
             c.gridy = i;
