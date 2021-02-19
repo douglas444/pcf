@@ -144,7 +144,7 @@ public class ResultSummary {
         return
                 ">>> Results for the Reliability Classifier:" +
                 "\nNumber of interceptions: " + calculateTotal() +
-                "\nTrue Unreliable: " + calculatePositives() +
+                "\nUnreliable: " + calculatePositives() +
                 "\nPrecision: " + calculatePrecision() +
                 "\nRecall: " + calculateRecall() +
                 "\nF1: " + calculateF1() +
