@@ -3,7 +3,6 @@ package br.ufu.facom.pcf.gui.components.singleton;
 import br.ufu.facom.pcf.gui.components.TextAreaOutputStream;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
@@ -53,10 +52,6 @@ public class OutputPanel extends JPanel {
         popUpMenu.add(save);
 
         this.setLayout(new BorderLayout());
-
-        final TitledBorder border = BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Output");
-        border.setTitleJustification(TitledBorder.LEFT);
-        this.setBorder(border);
 
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
