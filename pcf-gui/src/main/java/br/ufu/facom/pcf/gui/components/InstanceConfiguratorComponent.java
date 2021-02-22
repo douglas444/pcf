@@ -250,9 +250,17 @@ public class InstanceConfiguratorComponent extends JPanel {
 
     }
 
-    public Object getSelectedInstance() {
+    public Object configureAndGet() {
+
         final String selectedItem = (String) this.cmbInstances.getSelectedItem();
-        return this.instanceByName.getOrDefault(selectedItem, null);
+        final Object selectedInstance = this.instanceByName.getOrDefault(selectedItem, null);
+
+        if (selectedInstance != null) {
+            ((Configurable) selectedInstance).getNominalParameters().putAll(this.getNominalParameterValueByName());
+            ((Configurable) selectedInstance).getNumericParameters().putAll(this.getNumericParameterValueByName());
+        }
+
+        return selectedInstance;
     }
 
     public HashMap<String, String> getNominalParameterValueByName() {

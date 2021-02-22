@@ -6,5 +6,4 @@ public interface Configurable {
 
     HashMap<String, String> getNominalParameters();
     HashMap<String, Double> getNumericParameters();
-
 }

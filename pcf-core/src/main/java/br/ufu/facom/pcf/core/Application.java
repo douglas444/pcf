@@ -7,9 +7,12 @@ public class Application {
                                final LowLevelCategorizer lowLevelCategorizer) {
 
         final Interceptor interceptor = new Interceptor(highLevelCategorizer, lowLevelCategorizer);
-        interceptable.execute(interceptor);
-        final ResultSummary resultSummary = new ResultSummary(interceptor.getLogs());
-        System.out.println(resultSummary.toString());
+        if (interceptable.execute(interceptor)) {
+            final ResultSummary resultSummary = new ResultSummary(interceptor.getLogs());
+            System.out.println(resultSummary.toString());
+        } else {
+            System.out.println("Application execution interrupted!");
+        }
 
     }
 

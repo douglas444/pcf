@@ -24,6 +24,8 @@ public class MenuBar extends JMenuBar {
     private final JMenu menuHelp;
     private final JMenu menuRun;
 
+    private Interceptable interceptable;
+
     private MenuBar() {
 
         this.itemRun = new JMenuItem("Run...");
@@ -134,61 +136,34 @@ public class MenuBar extends JMenuBar {
 
         this.itemRun.addActionListener((event) -> {
 
-            FooterPanel.getInstance().setVisible(true);
+            if (this.interceptable != null) {
+                this.interceptable.stop();
+            }
 
-            final Interceptable interceptable = (Interceptable) ConfigurationPanel.getInstance().
-                    getInterceptableConfigurator().getSelectedInstance();
+            this.interceptable = (Interceptable) ConfigurationPanel.getInstance()
+                    .getInterceptableConfigurator().configureAndGet();
 
-            final HighLevelCategorizer highLevelCategorizer = (HighLevelCategorizer) ConfigurationPanel.getInstance()
-                    .getHighLevelCategorizerConfigurator().getSelectedInstance();
+            final Thread thread = new Thread(() -> {
 
-            final LowLevelCategorizer lowLevelCategorizer = (LowLevelCategorizer) ConfigurationPanel.getInstance()
-                    .getLowLevelCategorizerConfigurator().getSelectedInstance();
+                FooterPanel.getInstance().setVisible(true);
 
-            ((Configurable) interceptable).getNominalParameters().putAll(
-                    ConfigurationPanel
-                            .getInstance()
-                            .getInterceptableConfigurator()
-                            .getNominalParameterValueByName());
+                final HighLevelCategorizer highLevelCategorizer = (HighLevelCategorizer) ConfigurationPanel.getInstance()
+                        .getHighLevelCategorizerConfigurator().configureAndGet();
+                final LowLevelCategorizer lowLevelCategorizer = (LowLevelCategorizer) ConfigurationPanel.getInstance()
+                        .getLowLevelCategorizerConfigurator().configureAndGet();
 
-            ((Configurable) interceptable).getNumericParameters().putAll(
-                    ConfigurationPanel
-                            .getInstance()
-                            .getInterceptableConfigurator()
-                            .getNumericParameterValueByName());
+                Application.execute(interceptable, highLevelCategorizer, lowLevelCategorizer);
+                FooterPanel.getInstance().setVisible(false);
 
-            ((Configurable) highLevelCategorizer).getNominalParameters().putAll(
-                    ConfigurationPanel
-                            .getInstance()
-                            .getHighLevelCategorizerConfigurator()
-                            .getNominalParameterValueByName());
+            });
 
-            ((Configurable) highLevelCategorizer).getNumericParameters().putAll(
-                    ConfigurationPanel
-                            .getInstance()
-                            .getHighLevelCategorizerConfigurator()
-                            .getNumericParameterValueByName());
-
-            ((Configurable) lowLevelCategorizer).getNominalParameters().putAll(
-                    ConfigurationPanel
-                            .getInstance()
-                            .getLowLevelCategorizerConfigurator()
-                            .getNominalParameterValueByName());
-
-            ((Configurable) lowLevelCategorizer).getNumericParameters().putAll(
-                    ConfigurationPanel
-                            .getInstance()
-                            .getLowLevelCategorizerConfigurator()
-                            .getNumericParameterValueByName());
-
-            Application.execute(interceptable, highLevelCategorizer, lowLevelCategorizer);
-            FooterPanel.getInstance().setVisible(false);
-
+            thread.setDaemon(true);
+            thread.start();
         });
 
 
         this.itemStop.addActionListener((event) -> {
-
+            this.interceptable.stop();
         });
 
         this.menuFile.addActionListener((event) -> {

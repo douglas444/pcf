@@ -2,6 +2,7 @@ package br.ufu.facom.pcf.core;
 
 public interface Interceptable {
 
-    void execute(final Interceptor interceptor);
+    boolean execute(final Interceptor interceptor);
+    void stop();
 
 }
