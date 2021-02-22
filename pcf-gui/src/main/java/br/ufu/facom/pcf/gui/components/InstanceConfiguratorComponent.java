@@ -250,6 +250,12 @@ public class InstanceConfiguratorComponent extends JPanel {
 
     }
 
+    public Object get() {
+
+        final String selectedItem = (String) this.cmbInstances.getSelectedItem();
+        return this.instanceByName.getOrDefault(selectedItem, null);
+    }
+
     public Object configureAndGet() {
 
         final String selectedItem = (String) this.cmbInstances.getSelectedItem();

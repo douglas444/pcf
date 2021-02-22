@@ -15,7 +15,6 @@ public class MenuBar extends JMenuBar {
     private static MenuBar instance;
 
     private final JMenuItem itemRun;
-    private final JMenuItem itemStop;
     private final JMenuItem itemNew;
     private final JMenuItem itemLoad;
     private final JMenuItem itemSave;
@@ -29,7 +28,6 @@ public class MenuBar extends JMenuBar {
     private MenuBar() {
 
         this.itemRun = new JMenuItem("Run...");
-        this.itemStop = new JMenuItem("Stop");
         this.itemNew = new JMenuItem("New");
         this.itemLoad = new JMenuItem("Load");
         this.itemSave = new JMenuItem("Save");
@@ -43,7 +41,6 @@ public class MenuBar extends JMenuBar {
         menuFile.add(itemSave);
         menuFile.add(itemExit);
         menuRun.add(itemRun);
-        menuRun.add(itemStop);
         this.add(menuFile);
         this.add(menuRun);
         this.add(menuHelp);
@@ -163,11 +160,6 @@ public class MenuBar extends JMenuBar {
             thread.setDaemon(true);
             OutputDialog.getInstance().setVisible(true);
             thread.start();
-        });
-
-
-        this.itemStop.addActionListener((event) -> {
-            this.interceptable.stop();
         });
 
         this.menuFile.addActionListener((event) -> {
