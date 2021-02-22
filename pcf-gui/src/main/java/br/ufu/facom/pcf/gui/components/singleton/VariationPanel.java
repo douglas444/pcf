@@ -406,7 +406,7 @@ public class VariationPanel extends JPanel implements Persistent {
             final String message = "Invalid value for Variation's 'increment' field. Reverting to previous value."
                     + "\n    " + e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
 
-            JOptionPane.showMessageDialog(GUI.getInstance(), message,
+            JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                     "Error", JOptionPane.ERROR_MESSAGE);
 
             this.spinnerIncrement.setValue(this.spinnerIncrement.getPreviousValue());
@@ -418,7 +418,7 @@ public class VariationPanel extends JPanel implements Persistent {
 
             final String message = "Invalid value for Variation's 'times' field. Reverting to previous value."
                     + "\n    " + e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
-            JOptionPane.showMessageDialog(GUI.getInstance(), message,
+            JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                     "Error", JOptionPane.ERROR_MESSAGE);
 
             this.spinnerTimes.setValue(this.spinnerTimes.getPreviousValue());

@@ -22,7 +22,6 @@ public class TextAreaOutputStream extends OutputStream {
     }
     @Override
     public void write(int arg0) throws IOException {
-        //System.err.println(&quot;arg = &quot;  + (char) arg0);
         mBuf[mLocation++] = (byte)arg0;
         if (mLocation == mBuf.length) {
             flush();
@@ -31,13 +30,7 @@ public class TextAreaOutputStream extends OutputStream {
 
     public void flush() {
         mText.append(new String(mBuf, 0, mLocation));
+        mText.setCaretPosition(mText.getDocument().getLength());
         mLocation = 0;
-/*
-		try {
-			Thread.sleep(1);
-		}
-		catch (Exception ex) {}
-	}
-	*/
     }
 }

@@ -59,7 +59,7 @@ public class MainPanel extends JPanel {
         pnlScrollableContent.add(FinderPanel.getInstance(), c);
 
         c.weightx = 1 - MARGIN;
-        c.weighty = 0;
+        c.weighty = 1;
         c.gridx = 1;
         c.gridy = 1;
         c.gridwidth = 1;
@@ -68,17 +68,6 @@ public class MainPanel extends JPanel {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(10, 0, 0, 0);
         pnlScrollableContent.add(ConfigurationPanel.getInstance(), c);
-
-        c.weightx = 1 - MARGIN;
-        c.weighty = 1;
-        c.gridx = 1;
-        c.gridy = 2;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.NORTH;
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(10, 0, 10, 0);
-        pnlScrollableContent.add(OutputPanel.getInstance(), c);
 
         c.weightx = 1;
         c.weighty = 1;

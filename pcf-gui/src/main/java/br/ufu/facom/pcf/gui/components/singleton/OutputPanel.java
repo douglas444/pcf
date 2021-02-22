@@ -14,10 +14,11 @@ import java.io.PrintStream;
 public class OutputPanel extends JPanel {
 
     private static OutputPanel instance;
+    private final JTextArea txtArea;
 
     private OutputPanel() {
 
-        final JTextArea txtArea = new JTextArea(10, 1);
+        this.txtArea = new JTextArea(10, 1);
         final JScrollPane scrollPane = new JScrollPane();
         final JPopupMenu popUpMenu = new JPopupMenu();
 
@@ -75,5 +76,9 @@ public class OutputPanel extends JPanel {
         }
         return instance;
 
+    }
+
+    public void clear() {
+        this.txtArea.setText("");
     }
 }

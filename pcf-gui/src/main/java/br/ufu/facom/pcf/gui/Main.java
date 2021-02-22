@@ -1,12 +1,13 @@
 package br.ufu.facom.pcf.gui;
 
-import br.ufu.facom.pcf.gui.components.singleton.GUI;
+import br.ufu.facom.pcf.gui.components.singleton.MainFrame;
+import br.ufu.facom.pcf.gui.components.singleton.OutputDialog;
 
 public class Main {
 
     public static void main(final String[] args)
     {
-        final GUI view = GUI.getInstance();
-        view.setVisible(true);
+        MainFrame.getInstance().setVisible(true);
+        OutputDialog.getInstance().setVisible(false);
     }
 }

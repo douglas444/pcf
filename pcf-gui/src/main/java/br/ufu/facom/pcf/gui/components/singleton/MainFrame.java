@@ -3,11 +3,11 @@ package br.ufu.facom.pcf.gui.components.singleton;
 import javax.swing.*;
 import java.awt.*;
 
-public class GUI extends JFrame {
+public class MainFrame extends JFrame {
 
-    private static GUI instance;
+    private static MainFrame instance;
 
-    private GUI() {
+    private MainFrame() {
         this.setTitle("Active Pattern Learning GUI");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(650, 500);
@@ -17,10 +17,10 @@ public class GUI extends JFrame {
         this.setJMenuBar(MenuBar.getInstance());
     }
 
-    public static GUI getInstance() {
+    public static MainFrame getInstance() {
 
         if (instance == null) {
-            instance = new GUI();
+            instance = new MainFrame();
         }
         return instance;
 

@@ -72,7 +72,7 @@ public class MenuBar extends JMenuBar {
             final JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Load");
 
-            if (fileChooser.showOpenDialog(GUI.getInstance()) == JFileChooser.APPROVE_OPTION) {
+            if (fileChooser.showOpenDialog(MainFrame.getInstance()) == JFileChooser.APPROVE_OPTION) {
 
                 try {
 
@@ -87,7 +87,7 @@ public class MenuBar extends JMenuBar {
 
                 } catch (Exception e) {
                     final String message = e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
-                    JOptionPane.showMessageDialog(GUI.getInstance(), message,
+                    JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -107,7 +107,7 @@ public class MenuBar extends JMenuBar {
                 fileChooser.setSelectedFile(new File("pcf-config.xml"));
                 fileChooser.setDialogTitle("Save");
 
-                if (fileChooser.showSaveDialog(GUI.getInstance()) == JFileChooser.APPROVE_OPTION) {
+                if (fileChooser.showSaveDialog(MainFrame.getInstance()) == JFileChooser.APPROVE_OPTION) {
 
                     final JAXBContext jaxbContext = JAXBContext.newInstance(XMLConfiguration.class);
                     final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -120,7 +120,7 @@ public class MenuBar extends JMenuBar {
 
             } catch (Exception e) {
                 final String message = e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
-                JOptionPane.showMessageDialog(GUI.getInstance(), message,
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
 
@@ -136,6 +136,8 @@ public class MenuBar extends JMenuBar {
 
         this.itemRun.addActionListener((event) -> {
 
+            OutputPanel.getInstance().clear();
+
             if (this.interceptable != null) {
                 this.interceptable.stop();
             }
@@ -149,6 +151,7 @@ public class MenuBar extends JMenuBar {
 
                 final HighLevelCategorizer highLevelCategorizer = (HighLevelCategorizer) ConfigurationPanel.getInstance()
                         .getHighLevelCategorizerConfigurator().configureAndGet();
+
                 final LowLevelCategorizer lowLevelCategorizer = (LowLevelCategorizer) ConfigurationPanel.getInstance()
                         .getLowLevelCategorizerConfigurator().configureAndGet();
 
@@ -158,6 +161,7 @@ public class MenuBar extends JMenuBar {
             });
 
             thread.setDaemon(true);
+            OutputDialog.getInstance().setVisible(true);
             thread.start();
         });
 

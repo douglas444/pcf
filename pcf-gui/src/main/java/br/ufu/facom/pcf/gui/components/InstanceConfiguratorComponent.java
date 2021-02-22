@@ -1,7 +1,7 @@
 package br.ufu.facom.pcf.gui.components;
 
 import br.ufu.facom.pcf.core.Configurable;
-import br.ufu.facom.pcf.gui.components.singleton.GUI;
+import br.ufu.facom.pcf.gui.components.singleton.MainFrame;
 import br.ufu.facom.pcf.gui.components.singleton.ConfigurationPanel;
 import br.ufu.facom.pcf.gui.components.singleton.VariationPanel;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -285,7 +285,7 @@ public class InstanceConfiguratorComponent extends JPanel {
                         + "' parameter. Reverting to previous value."
                         + "\n    " + e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
 
-                JOptionPane.showMessageDialog(GUI.getInstance(), message,
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                         "Error", JOptionPane.ERROR_MESSAGE);
 
                 spinner.setValue(spinner.getPreviousValue());

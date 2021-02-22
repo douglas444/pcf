@@ -128,7 +128,7 @@ public class FinderPanel extends JPanel implements Persistent {
 
         this.btnSearch.addActionListener((event) -> {
 
-            if (this.chooser.showOpenDialog(GUI.getInstance()) == JFileChooser.APPROVE_OPTION) {
+            if (this.chooser.showOpenDialog(MainFrame.getInstance()) == JFileChooser.APPROVE_OPTION) {
 
                 final FileListAccessory accessory = (FileListAccessory) this.chooser.getAccessory();
                 final Enumeration<File> enumeration = accessory.getLstModel().elements();
@@ -171,7 +171,7 @@ public class FinderPanel extends JPanel implements Persistent {
         } catch (ServiceException e) {
 
             final String message = e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
-            JOptionPane.showMessageDialog(GUI.getInstance(), message,
+            JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                     "Error", JOptionPane.ERROR_MESSAGE);
 
         }
