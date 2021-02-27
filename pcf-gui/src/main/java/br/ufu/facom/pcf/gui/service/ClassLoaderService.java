@@ -67,10 +67,10 @@ public class ClassLoaderService {
                     try {
                         Constructor<?> constructor = classReference.getConstructor();
                         instance = constructor.newInstance();
-                    } catch (NoClassDefFoundError e) {
-                        throw new ServiceException("Failed to load class " + className, e);
-                    } catch (Exception ex) {
+                    } catch (NoSuchMethodException ex) {
                         continue;
+                    } catch (NoClassDefFoundError | Exception e) {
+                        throw new ServiceException("Failed to load class " + className, e);
                     }
 
                     if (instance instanceof Interceptable) {
@@ -95,15 +95,23 @@ public class ClassLoaderService {
         }
 
         if (instancesMapByClass.get(Interceptable.class).isEmpty()) {
-            throw new ServiceException("No Interceptable interface implementation.");
+            throw new ServiceException("Failed to find an Interceptable interface implementation " +
+                    "with a default constructor.");
         }
         if (instancesMapByClass.get(HighLevelCategorizer.class).isEmpty()) {
-            throw new ServiceException("No HighLevelCategorizer interface implementation.");
+            throw new ServiceException("Failed to find an HighLevelCategorizer interface implementation " +
+                    "with a default constructor.");
         }
         if (instancesMapByClass.get(LowLevelCategorizer.class).isEmpty()) {
-            throw new ServiceException("No LowLevelCategorizer interface implementation.");
+            throw new ServiceException("Failed to find an LowLevelCategorizer interface implementation " +
+                    "with a default constructor.");
         }
 
+        try {
+            classLoader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return instancesMapByClass;
 
     }

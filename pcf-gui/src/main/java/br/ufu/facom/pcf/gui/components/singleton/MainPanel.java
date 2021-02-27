@@ -17,6 +17,7 @@ public class MainPanel extends JPanel {
         scrollPane.setViewportView(pnlScrollableContent);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         final JPanel pnlDummyRightMargin = new JPanel();
         final JPanel pnlDummyLeftMargin = new JPanel();
@@ -66,7 +67,7 @@ public class MainPanel extends JPanel {
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTH;
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(10, 0, 0, 0);
+        c.insets = new Insets(10, 0, 30, 0);
         pnlScrollableContent.add(ConfigurationPanel.getInstance(), c);
 
         c.weightx = 1;

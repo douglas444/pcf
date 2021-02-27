@@ -1,4 +1,4 @@
-package br.ufu.facom.pcf.gui.persistence;
+package br.ufu.facom.pcf.gui.service.persistence;
 
 public interface Persistent {
     void reset();

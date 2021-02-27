@@ -1,9 +1,9 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
-import br.ufu.facom.pcf.gui.persistence.NominalParameterValue;
-import br.ufu.facom.pcf.gui.persistence.NumericParameterValue;
-import br.ufu.facom.pcf.gui.persistence.Persistent;
-import br.ufu.facom.pcf.gui.persistence.XMLConfiguration;
+import br.ufu.facom.pcf.gui.service.persistence.NominalParameterValue;
+import br.ufu.facom.pcf.gui.service.persistence.NumericParameterValue;
+import br.ufu.facom.pcf.gui.service.persistence.Persistent;
+import br.ufu.facom.pcf.gui.service.persistence.XMLConfiguration;
 import br.ufu.facom.pcf.gui.components.InstanceConfiguratorComponent;
 
 import javax.swing.*;
@@ -21,9 +21,14 @@ public class ConfigurationPanel extends JPanel implements Persistent {
 
     private ConfigurationPanel() {
 
-        this.interceptableConfigurator = new InstanceConfiguratorComponent("Interceptable");
-        this.highLevelCategorizerConfigurator = new InstanceConfiguratorComponent("HighLevelCategorizer");
-        this.lowLevelCategorizerConfigurator = new InstanceConfiguratorComponent("LowLevelCategorizer");
+        this.interceptableConfigurator =
+                new InstanceConfiguratorComponent("Interceptable");
+
+        this.highLevelCategorizerConfigurator =
+                new InstanceConfiguratorComponent("HighLevelCategorizer");
+
+        this.lowLevelCategorizerConfigurator =
+                new InstanceConfiguratorComponent("LowLevelCategorizer");
 
         this.setLayout(new GridBagLayout());
 
@@ -112,9 +117,12 @@ public class ConfigurationPanel extends JPanel implements Persistent {
     @Override
     public void load(XMLConfiguration configuration) {
 
-        this.interceptableConfigurator.setSelectedItem(configuration.getInterceptableClassName());
-        this.highLevelCategorizerConfigurator.setSelectedItem(configuration.getHighLevelCategorizerClassName());
-        this.lowLevelCategorizerConfigurator.setSelectedItem(configuration.getLowLevelCategorizerClassName());
+        this.interceptableConfigurator.setSelectedItem(
+                configuration.getInterceptableClassName());
+        this.highLevelCategorizerConfigurator.setSelectedItem(
+                configuration.getHighLevelCategorizerClassName());
+        this.lowLevelCategorizerConfigurator.setSelectedItem(
+                configuration.getLowLevelCategorizerClassName());
 
         loadConfiguratorParametersState(this.interceptableConfigurator,
                 configuration.getInterceptableNominalParameters(),
@@ -130,16 +138,21 @@ public class ConfigurationPanel extends JPanel implements Persistent {
     @Override
     public void save(XMLConfiguration configuration) {
 
-        configuration.setInterceptableClassName(this.interceptableConfigurator.getSelectedItem());
-        configuration.setHighLevelCategorizerClassName(this.highLevelCategorizerConfigurator.getSelectedItem());
-        configuration.setLowLevelCategorizerClassName(this.lowLevelCategorizerConfigurator.getSelectedItem());
+        configuration.setInterceptableClassName(
+                this.interceptableConfigurator.getSelectedItem());
+        configuration.setHighLevelCategorizerClassName(
+                this.highLevelCategorizerConfigurator.getSelectedItem());
+        configuration.setLowLevelCategorizerClassName(
+                this.lowLevelCategorizerConfigurator.getSelectedItem());
 
         saveConfiguratorParametersState(this.interceptableConfigurator,
                 configuration.getInterceptableNominalParameters(),
                 configuration.getInterceptableNumericParameters());
+
         saveConfiguratorParametersState(this.highLevelCategorizerConfigurator,
                 configuration.getHighLevelCategorizerNominalParameters(),
                 configuration.getHighLevelCategorizerNumericParameters());
+
         saveConfiguratorParametersState(this.lowLevelCategorizerConfigurator,
                 configuration.getLowLevelCategorizerNominalParameters(),
                 configuration.getLowLevelCategorizerNumericParameters());
@@ -154,14 +167,15 @@ public class ConfigurationPanel extends JPanel implements Persistent {
         final HashMap<String, String> valueByNominalParameterName = new HashMap<>();
         final HashMap<String, Double> valueByNumericParameterName = new HashMap<>();
 
-        nominalParameterValues.forEach(nominalParameterValue -> {
-            valueByNominalParameterName.put(nominalParameterValue.getParameterName(),
-                    nominalParameterValue.getValue());
-        });
-        numericParameterValues.forEach(numericParameterValue -> {
-            valueByNumericParameterName.put(numericParameterValue.getParameterName(),
-                    numericParameterValue.getValue());
-        });
+        nominalParameterValues.forEach(nominalParameterValue ->
+                valueByNominalParameterName.put(
+                        nominalParameterValue.getParameterName(),
+                        nominalParameterValue.getValue()));
+
+        numericParameterValues.forEach(numericParameterValue ->
+                valueByNumericParameterName.put(
+                        numericParameterValue.getParameterName(),
+                        numericParameterValue.getValue()));
 
         configurator.load(valueByNominalParameterName, valueByNumericParameterName);
     }

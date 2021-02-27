@@ -15,6 +15,7 @@ public class FooterPanel extends JPanel {
         final JLabel lblRunning = new JLabel("Running... ", JLabel.CENTER);
 
         this.setLayout(new BorderLayout());
+        this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         final URL url = Main.class.getClassLoader().getResource("ajax-loader.gif");
         if (url != null) {

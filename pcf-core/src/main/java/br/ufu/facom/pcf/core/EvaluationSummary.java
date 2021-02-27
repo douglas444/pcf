@@ -28,7 +28,7 @@ public class EvaluationSummary {
     public EvaluationSummary(final List<Log> logs) {
 
         if (logs.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Cannot calculate measures. No log was registered.");
         }
 
         this.trueUnreliable = (int) logs.stream()

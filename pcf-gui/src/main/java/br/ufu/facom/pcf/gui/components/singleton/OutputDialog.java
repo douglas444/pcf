@@ -1,5 +1,9 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
+import br.ufu.facom.pcf.gui.exception.ServiceException;
+import br.ufu.facom.pcf.gui.service.CustomExceptionMessage;
+import br.ufu.facom.pcf.gui.service.ExecutionController;
+
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -16,9 +20,18 @@ public class OutputDialog extends JDialog {
         this.setContentPane(OutputPanel.getInstance());
         this.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent event) {
                 OutputDialog.getInstance().setVisible(false);
-                MenuBar.stop();
+                try {
+                    ExecutionController.stop();
+                } catch (ServiceException e) {
+
+                    final String message = e.getMessage() + "\n    "
+                            + CustomExceptionMessage.build(e);
+
+                    JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
     }

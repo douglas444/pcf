@@ -1,23 +1,23 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
-import br.ufu.facom.pcf.core.LowLevelCategorizer;
 import br.ufu.facom.pcf.core.HighLevelCategorizer;
 import br.ufu.facom.pcf.core.Interceptable;
+import br.ufu.facom.pcf.core.LowLevelCategorizer;
 import br.ufu.facom.pcf.gui.components.ChooserForFileListAccessory;
 import br.ufu.facom.pcf.gui.components.FileListAccessory;
 import br.ufu.facom.pcf.gui.exception.ServiceException;
-import br.ufu.facom.pcf.gui.persistence.Persistent;
-import br.ufu.facom.pcf.gui.persistence.XMLConfiguration;
 import br.ufu.facom.pcf.gui.service.ClassLoaderService;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import br.ufu.facom.pcf.gui.service.CustomExceptionMessage;
+import br.ufu.facom.pcf.gui.service.persistence.Persistent;
+import br.ufu.facom.pcf.gui.service.persistence.XMLConfiguration;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.File;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FinderPanel extends JPanel implements Persistent {
@@ -34,7 +34,9 @@ public class FinderPanel extends JPanel implements Persistent {
 
         this.btnSearch = new JButton("...");
         this.txtPath = new JTextField(1);
-        this.chooser = new ChooserForFileListAccessory(FileSystemView.getFileSystemView().getHomeDirectory());
+        this.txtPath.setEnabled(false);
+        this.chooser = new ChooserForFileListAccessory(
+                FileSystemView.getFileSystemView().getHomeDirectory());
 
         this.setLayout(new GridBagLayout());
         lblClasspath.setFont(lblClasspath.getFont().deriveFont(Font.PLAIN));
@@ -45,7 +47,8 @@ public class FinderPanel extends JPanel implements Persistent {
         this.chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         this.chooser.setAcceptAllFileFilterUsed(false);
         this.chooser.setFileHidingEnabled(false);
-        this.chooser.setFileFilter(new FileNameExtensionFilter("Classpath folders; JAR files;", "jar"));
+        this.chooser.setFileFilter(
+                new FileNameExtensionFilter("Classpath folders; JAR files;", "jar"));
 
         final GridBagConstraints c = new GridBagConstraints();
 
@@ -128,7 +131,8 @@ public class FinderPanel extends JPanel implements Persistent {
 
         this.btnSearch.addActionListener((event) -> {
 
-            if (this.chooser.showOpenDialog(MainFrame.getInstance()) == JFileChooser.APPROVE_OPTION) {
+            if (this.chooser.showOpenDialog(MainFrame.getInstance())
+                    == JFileChooser.APPROVE_OPTION) {
 
                 final FileListAccessory accessory = (FileListAccessory) this.chooser.getAccessory();
                 final Enumeration<File> enumeration = accessory.getLstModel().elements();
@@ -170,7 +174,9 @@ public class FinderPanel extends JPanel implements Persistent {
 
         } catch (ServiceException e) {
 
-            final String message = e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
+            final String message = e.getMessage() + "\n    "
+                    + CustomExceptionMessage.build(e);
+
             JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                     "Error", JOptionPane.ERROR_MESSAGE);
 

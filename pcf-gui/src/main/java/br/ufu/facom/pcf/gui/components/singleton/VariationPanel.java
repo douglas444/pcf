@@ -1,12 +1,12 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
 import br.ufu.facom.pcf.core.Configurable;
-import br.ufu.facom.pcf.core.LowLevelCategorizer;
 import br.ufu.facom.pcf.core.HighLevelCategorizer;
 import br.ufu.facom.pcf.core.Interceptable;
-import br.ufu.facom.pcf.gui.persistence.Persistent;
-import br.ufu.facom.pcf.gui.persistence.XMLConfiguration;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import br.ufu.facom.pcf.core.LowLevelCategorizer;
+import br.ufu.facom.pcf.gui.service.SpinnerUtil;
+import br.ufu.facom.pcf.gui.service.persistence.Persistent;
+import br.ufu.facom.pcf.gui.service.persistence.XMLConfiguration;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -41,8 +41,12 @@ public class VariationPanel extends JPanel implements Persistent {
         this.pnlVariableParameter = new JPanel(new GridBagLayout());
         this.pnlVariationBorder = new JPanel(new GridBagLayout());
         this.bgRadioParameter = new ButtonGroup();
-        this.spinnerIncrement = new JSpinner(new SpinnerNumberModel(0.0, -Double.MAX_VALUE, Double.MAX_VALUE,0.1));
-        this.spinnerTimes = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE,1));
+
+        this.spinnerIncrement = new JSpinner(
+                new SpinnerNumberModel(0.0, -Double.MAX_VALUE, Double.MAX_VALUE,0.1));
+
+        this.spinnerTimes = new JSpinner(
+                new SpinnerNumberModel(1, 1, Integer.MAX_VALUE,1));
 
         ((JSpinner.NumberEditor) spinnerIncrement.getEditor()).getTextField().setColumns(1);
         ((JSpinner.NumberEditor) spinnerTimes.getEditor()).getTextField().setColumns(1);
@@ -232,14 +236,25 @@ public class VariationPanel extends JPanel implements Persistent {
         this.radioButtonLowLevelCategorizerParameters.forEach(this.bgRadioParameter::remove);
         this.radioButtonLowLevelCategorizerParameters.clear();
 
-        final List<String> interceptableParametersNames = new ArrayList<>(ConfigurationPanel.getInstance()
-                .getInterceptableConfigurator().getNumericParameterValueByName().keySet());
+        final List<String> interceptableParametersNames = new ArrayList<>(
+                ConfigurationPanel
+                        .getInstance()
+                        .getInterceptableConfigurator()
+                        .getNumericParameterValueByName()
+                        .keySet());
 
-        final List<String> highLevelCategorizerParametersNames = new ArrayList<>(ConfigurationPanel.getInstance()
-                .getHighLevelCategorizerConfigurator().getNumericParameterValueByName().keySet());
+        final List<String> highLevelCategorizerParametersNames = new ArrayList<>(
+                ConfigurationPanel
+                        .getInstance()
+                        .getHighLevelCategorizerConfigurator()
+                        .getNumericParameterValueByName()
+                        .keySet());
 
-        final List<String> lowLevelCategorizerParametersNames = new ArrayList<>(ConfigurationPanel.getInstance()
-                .getLowLevelCategorizerConfigurator().getNumericParameterValueByName().keySet());
+        final List<String> lowLevelCategorizerParametersNames = new ArrayList<>(
+                ConfigurationPanel
+                        .getInstance()
+                        .getLowLevelCategorizerConfigurator()
+                        .getNumericParameterValueByName().keySet());
 
         final GridBagConstraints c = new GridBagConstraints();
 
@@ -253,7 +268,9 @@ public class VariationPanel extends JPanel implements Persistent {
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 0, 0, 0);
         this.pnlVariableParameter.add(
-                setVariableParametersList(interceptableParametersNames, Interceptable.class), c);
+                setVariableParametersList(
+                        interceptableParametersNames,
+                        Interceptable.class), c);
 
         c.weightx = 1;
         c.weighty = 0;
@@ -265,7 +282,9 @@ public class VariationPanel extends JPanel implements Persistent {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(10, 0, 0, 0);
         this.pnlVariableParameter.add(
-                setVariableParametersList(highLevelCategorizerParametersNames, HighLevelCategorizer.class), c);
+                setVariableParametersList(
+                        highLevelCategorizerParametersNames,
+                        HighLevelCategorizer.class), c);
 
         c.weightx = 1;
         c.weighty = 0;
@@ -277,7 +296,9 @@ public class VariationPanel extends JPanel implements Persistent {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(10, 0, 0, 0);
         this.pnlVariableParameter.add(
-                setVariableParametersList(lowLevelCategorizerParametersNames, LowLevelCategorizer.class), c);
+                setVariableParametersList(
+                        lowLevelCategorizerParametersNames,
+                        LowLevelCategorizer.class), c);
 
         if (!this.radioButtonInterceptableParameters.isEmpty()) {
             this.radioButtonInterceptableParameters.get(0).setSelected(true);
@@ -359,16 +380,24 @@ public class VariationPanel extends JPanel implements Persistent {
 
         final List<JRadioButton> radioButtons;
 
-        if (Interceptable.class.getSimpleName().equals(configuration.getVariableParameterType())) {
+        if (Interceptable.class.getSimpleName()
+                .equals(configuration.getVariableParameterType())) {
+
             radioButtons = radioButtonInterceptableParameters;
-        } else if (HighLevelCategorizer.class.getSimpleName().equals(configuration.getVariableParameterType())) {
+
+        } else if (HighLevelCategorizer.class.getSimpleName()
+                .equals(configuration.getVariableParameterType())) {
+
             radioButtons = radioButtonHighLevelCategorizerParameters;
+
         } else {
             radioButtons = radioButtonLowLevelCategorizerParameters;
         }
 
         radioButtons.stream()
-                .filter(radioButton -> radioButton.getText().equals(configuration.getVariableParameterName()))
+                .filter(radioButton -> radioButton
+                        .getText()
+                        .equals(configuration.getVariableParameterName()))
                 .findAny()
                 .ifPresent(radioButton -> radioButton.setSelected(true));
 
@@ -385,46 +414,26 @@ public class VariationPanel extends JPanel implements Persistent {
         this.radioButtonInterceptableParameters.stream()
                 .filter(AbstractButton::isSelected).findAny().ifPresent((btnRadio) -> {
                     configuration.setVariableParameterName(btnRadio.getText());
-                    configuration.setVariableParameterType(Interceptable.class.getSimpleName());
+                    configuration.setVariableParameterType(
+                            Interceptable.class.getSimpleName());
                 });
 
         this.radioButtonHighLevelCategorizerParameters.stream()
                 .filter(AbstractButton::isSelected).findAny().ifPresent((btnRadio) -> {
                     configuration.setVariableParameterName(btnRadio.getText());
-                    configuration.setVariableParameterType(HighLevelCategorizer.class.getSimpleName());
+                    configuration.setVariableParameterType(
+                            HighLevelCategorizer.class.getSimpleName());
                 });
 
         this.radioButtonLowLevelCategorizerParameters.stream()
                 .filter(AbstractButton::isSelected).findAny().ifPresent((btnRadio) -> {
                     configuration.setVariableParameterName(btnRadio.getText());
-                    configuration.setVariableParameterType(LowLevelCategorizer.class.getSimpleName());
+                    configuration.setVariableParameterType(
+                            LowLevelCategorizer.class.getSimpleName());
                 });
 
-        try {
-            this.spinnerIncrement.commitEdit();
-        } catch (Exception e) {
-
-            final String message = "Invalid value for Variation's 'increment' field. Reverting to previous value."
-                    + "\n    " + e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
-
-            JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
-                    "Error", JOptionPane.ERROR_MESSAGE);
-
-            this.spinnerIncrement.setValue(this.spinnerIncrement.getPreviousValue());
-        }
-
-        try {
-            this.spinnerTimes.commitEdit();
-        } catch (Exception e) {
-
-            final String message = "Invalid value for Variation's 'times' field. Reverting to previous value."
-                    + "\n    " + e.getMessage() + "\n    " + ExceptionUtils.getRootCauseMessage(e);
-            JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
-                    "Error", JOptionPane.ERROR_MESSAGE);
-
-            this.spinnerTimes.setValue(this.spinnerTimes.getPreviousValue());
-
-        }
+        SpinnerUtil.commitSpinner(this.spinnerIncrement, "increment");
+        SpinnerUtil.commitSpinner(this.spinnerTimes, "times");
 
         configuration.setVariationIncrement((Double) this.spinnerIncrement.getValue());
         configuration.setVariationTimes((Integer) this.spinnerTimes.getValue());
@@ -447,10 +456,12 @@ public class VariationPanel extends JPanel implements Persistent {
     }
 
     public double getIncrement() {
+        SpinnerUtil.commitSpinner(this.spinnerIncrement, "increment");
         return (Double) this.spinnerIncrement.getValue();
     }
 
     public int getTimes() {
+        SpinnerUtil.commitSpinner(this.spinnerTimes, "times");
         return (Integer) this.spinnerTimes.getValue();
     }
 
@@ -473,17 +484,27 @@ public class VariationPanel extends JPanel implements Persistent {
     public Configurable getConfigurable() {
         for (JRadioButton radioButton : this.radioButtonInterceptableParameters) {
             if (this.bgRadioParameter.isSelected(radioButton.getModel())) {
-                return (Configurable) ConfigurationPanel.getInstance().getInterceptableConfigurator().get();
+
+                return (Configurable) ConfigurationPanel
+                        .getInstance()
+                        .getInterceptableConfigurator()
+                        .get();
             }
         }
         for (JRadioButton radioButton : this.radioButtonHighLevelCategorizerParameters) {
             if (this.bgRadioParameter.isSelected(radioButton.getModel())) {
-                return (Configurable) ConfigurationPanel.getInstance().getHighLevelCategorizerConfigurator().get();
+                return (Configurable) ConfigurationPanel
+                        .getInstance()
+                        .getHighLevelCategorizerConfigurator()
+                        .get();
             }
         }
         for (JRadioButton radioButton : this.radioButtonLowLevelCategorizerParameters) {
             if (this.bgRadioParameter.isSelected(radioButton.getModel())) {
-                return (Configurable) ConfigurationPanel.getInstance().getLowLevelCategorizerConfigurator().get();
+                return (Configurable) ConfigurationPanel
+                        .getInstance()
+                        .getLowLevelCategorizerConfigurator()
+                        .get();
             }
         }
         return null;
