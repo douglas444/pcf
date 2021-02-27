@@ -135,9 +135,7 @@ public class InstanceConfiguratorComponent extends JPanel {
                 nominalParameters = new ArrayList<>(configurable.getNominalParameters().keySet());
             }
 
-            if (numericParameters == null) {
-                this.setParameters(new ArrayList<>(), true);
-            } else {
+            if (numericParameters != null) {
                 this.setParameters(numericParameters, true);
                 final Configurable configurable = (Configurable) instance;
 
@@ -146,9 +144,7 @@ public class InstanceConfiguratorComponent extends JPanel {
                 });
             }
 
-            if (nominalParameters == null) {
-                this.setParameters(new ArrayList<>(), false);
-            } else {
+            if (nominalParameters != null) {
                 this.setParameters(nominalParameters, false);
                 final Configurable configurable = (Configurable) instance;
 
@@ -261,7 +257,7 @@ public class InstanceConfiguratorComponent extends JPanel {
         final String selectedItem = (String) this.cmbInstances.getSelectedItem();
         final Object selectedInstance = this.instanceByName.getOrDefault(selectedItem, null);
 
-        if (selectedInstance != null) {
+        if (selectedInstance instanceof Configurable) {
             ((Configurable) selectedInstance).getNominalParameters().putAll(this.getNominalParameterValueByName());
             ((Configurable) selectedInstance).getNumericParameters().putAll(this.getNumericParameterValueByName());
         }

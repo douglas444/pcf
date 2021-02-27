@@ -2,7 +2,6 @@ package br.ufu.facom.pcf.core;
 
 public class Log {
 
-
     private Category realCategory;
     private Category basePredictedCategory;
     private Category highLevelPredictedCategory;
