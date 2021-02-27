@@ -1,6 +1,6 @@
 package br.ufu.facom.pcf.core;
 
-public enum CategorizationLabel {
+public enum Confidence {
     RELIABLE,
-    RISKY
+    UNRELIABLE
 }

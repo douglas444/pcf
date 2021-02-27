@@ -1,5 +1,6 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
+import br.ufu.facom.pcf.core.Configurable;
 import br.ufu.facom.pcf.core.LowLevelCategorizer;
 import br.ufu.facom.pcf.core.HighLevelCategorizer;
 import br.ufu.facom.pcf.core.Interceptable;
@@ -439,5 +440,53 @@ public class VariationPanel extends JPanel implements Persistent {
 
         this.rbUnique.addActionListener(typeExecutionChange);
         this.rbMultiple.addActionListener(typeExecutionChange);
+    }
+
+    public boolean isUnique() {
+        return this.rbUnique.isSelected();
+    }
+
+    public double getIncrement() {
+        return (Double) this.spinnerIncrement.getValue();
+    }
+
+    public int getTimes() {
+        return (Integer) this.spinnerTimes.getValue();
+    }
+
+    public String getParameter() {
+
+        final List<JRadioButton> radioButtons = new ArrayList<>();
+        radioButtons.addAll(this.radioButtonInterceptableParameters);
+        radioButtons.addAll(this.radioButtonHighLevelCategorizerParameters);
+        radioButtons.addAll(this.radioButtonLowLevelCategorizerParameters);
+
+        for (JRadioButton radioButton : radioButtons) {
+            if (this.bgRadioParameter.isSelected(radioButton.getModel())) {
+                return radioButton.getText();
+            }
+        }
+
+        return radioButtons.get(0).getText();
+    }
+
+    public Configurable getConfigurable() {
+        for (JRadioButton radioButton : this.radioButtonInterceptableParameters) {
+            if (this.bgRadioParameter.isSelected(radioButton.getModel())) {
+                return (Configurable) ConfigurationPanel.getInstance().getInterceptableConfigurator().get();
+            }
+        }
+        for (JRadioButton radioButton : this.radioButtonHighLevelCategorizerParameters) {
+            if (this.bgRadioParameter.isSelected(radioButton.getModel())) {
+                return (Configurable) ConfigurationPanel.getInstance().getHighLevelCategorizerConfigurator().get();
+            }
+        }
+        for (JRadioButton radioButton : this.radioButtonLowLevelCategorizerParameters) {
+            if (this.bgRadioParameter.isSelected(radioButton.getModel())) {
+                return (Configurable) ConfigurationPanel.getInstance().getLowLevelCategorizerConfigurator().get();
+            }
+        }
+        return null;
+
     }
 }

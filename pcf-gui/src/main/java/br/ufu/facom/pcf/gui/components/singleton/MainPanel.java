@@ -79,17 +79,6 @@ public class MainPanel extends JPanel {
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(5, 5, 5, 5);
         this.add(scrollPane, c);
-
-        c.weightx = 1;
-        c.weighty = 0;
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.anchor = GridBagConstraints.CENTER;
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(5, 5, 10, 5);
-        this.add(FooterPanel.getInstance(), c);
     }
 
     public static MainPanel getInstance() {

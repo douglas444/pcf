@@ -9,31 +9,25 @@ public class Interceptor {
     private final LowLevelCategorizer lowLevelCategorizer;
     private final List<Log> logs;
 
-    public Interceptor(final HighLevelCategorizer highLevelCategorizer, final LowLevelCategorizer lowLevelCategorizer) {
+    public Interceptor(final HighLevelCategorizer highLevelCategorizer,
+                       final LowLevelCategorizer lowLevelCategorizer) {
+
         this.highLevelCategorizer = highLevelCategorizer;
         this.lowLevelCategorizer = lowLevelCategorizer;
         this.logs = new ArrayList<>();
     }
 
-    private boolean validateContext(final Context context) {
-        return true;
-    }
+    public Category intercept(final Context context) {
 
-    public void intercepting(final Context context) {
-
-        if (!validateContext(context)) {
-            throw new IllegalArgumentException();
-        }
-
-        final Category highLevelCategoryPrediction = this.highLevelCategorizer.categorize(context);
-        final CategorizationLabel categorizationLabel;
+        final Confidence confidence;
         final Category lowLevelCategoryPrediction;
 
+        final Category highLevelCategoryPrediction = this.highLevelCategorizer.categorize(context);
         if (highLevelCategoryPrediction == context.getPredictedCategory()) {
-            categorizationLabel = CategorizationLabel.RELIABLE;
+            confidence = Confidence.RELIABLE;
             lowLevelCategoryPrediction = null;
         } else {
-            categorizationLabel = CategorizationLabel.RISKY;
+            confidence = Confidence.UNRELIABLE;
             lowLevelCategoryPrediction = lowLevelCategorizer.categorize(context);
         }
 
@@ -41,7 +35,13 @@ public class Interceptor {
                 context.getPredictedCategory(),
                 highLevelCategoryPrediction,
                 lowLevelCategoryPrediction,
-                categorizationLabel));
+                confidence));
+
+        if (confidence == Confidence.RELIABLE) {
+            return highLevelCategoryPrediction;
+        } else {
+            return lowLevelCategoryPrediction;
+        }
     }
 
     public List<Log> getLogs() {return logs;}

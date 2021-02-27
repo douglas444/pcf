@@ -1,14 +1,11 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
-import br.ufu.facom.pcf.gui.components.TextAreaOutputStream;
-
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.PrintStream;
 
 public class OutputPanel extends JPanel {
 
@@ -57,10 +54,10 @@ public class OutputPanel extends JPanel {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setViewportView(txtArea);
         txtArea.setComponentPopupMenu(popUpMenu);
+        txtArea.setFont(new Font("monospaced", Font.PLAIN, 12));
 
         this.add(scrollPane, BorderLayout.CENTER);
-        System.setOut(new PrintStream(new TextAreaOutputStream(txtArea)));
-        System.setErr(new PrintStream(new TextAreaOutputStream(txtArea)));
+        this.add(FooterPanel.getInstance(), BorderLayout.SOUTH);
 
     }
 
@@ -75,5 +72,9 @@ public class OutputPanel extends JPanel {
 
     public void clear() {
         this.txtArea.setText("");
+    }
+
+    public JTextArea getTxtArea() {
+        return txtArea;
     }
 }
