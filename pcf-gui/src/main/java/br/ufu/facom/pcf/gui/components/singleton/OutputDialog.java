@@ -1,7 +1,5 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
-import br.ufu.facom.pcf.core.Interceptable;
-
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -20,11 +18,7 @@ public class OutputDialog extends JDialog {
             @Override
             public void windowClosing(WindowEvent e) {
                 OutputDialog.getInstance().setVisible(false);
-                final Interceptable interceptable = (Interceptable) ConfigurationPanel.getInstance()
-                        .getInterceptableConfigurator().get();
-                if (interceptable != null) {
-                    interceptable.stop();
-                }
+                MenuBar.stop();
             }
         });
     }

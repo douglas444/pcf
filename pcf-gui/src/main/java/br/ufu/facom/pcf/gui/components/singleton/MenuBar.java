@@ -25,6 +25,7 @@ public class MenuBar extends JMenuBar {
             "%8$9s, %9$9s, %10$9s, %11$9s, %12$9s";
 
     private final JMenuItem itemRun;
+    private final JMenuItem itemStop;
     private final JMenuItem itemNew;
     private final JMenuItem itemLoad;
     private final JMenuItem itemSave;
@@ -38,6 +39,7 @@ public class MenuBar extends JMenuBar {
     private MenuBar() {
 
         this.itemRun = new JMenuItem("Run...");
+        this.itemStop = new JMenuItem("Stop");
         this.itemNew = new JMenuItem("New");
         this.itemLoad = new JMenuItem("Load");
         this.itemSave = new JMenuItem("Save");
@@ -46,14 +48,15 @@ public class MenuBar extends JMenuBar {
         this.menuHelp = new JMenu("Help");
         this.menuRun = new JMenu("Run");
 
-        menuFile.add(itemNew);
-        menuFile.add(itemLoad);
-        menuFile.add(itemSave);
-        menuFile.add(itemExit);
-        menuRun.add(itemRun);
-        this.add(menuFile);
-        this.add(menuRun);
-        this.add(menuHelp);
+        this.menuFile.add(this.itemNew);
+        this.menuFile.add(this.itemLoad);
+        this.menuFile.add(this.itemSave);
+        this.menuFile.add(this.itemExit);
+        this.menuRun.add(this.itemRun);
+        this.menuRun.add(this.itemStop);
+        this.add(this.menuFile);
+        this.add(this.menuRun);
+        this.add(this.menuHelp);
 
         this.configureBehavior();
 
@@ -141,6 +144,10 @@ public class MenuBar extends JMenuBar {
 
         });
 
+        this.itemStop.addActionListener((event) -> {
+            stop();
+        });
+
         this.itemRun.addActionListener((event) -> {
 
             OutputPanel.getInstance().clear();
@@ -208,6 +215,14 @@ public class MenuBar extends JMenuBar {
         this.menuRun.addActionListener((event) -> {
         });
 
+    }
+
+    public static void stop() {
+        final Interceptable interceptable = (Interceptable) ConfigurationPanel.getInstance()
+                .getInterceptableConfigurator().get();
+        if (interceptable != null) {
+            interceptable.stop();
+        }
     }
 
     public static void execute(final Interceptable interceptable,
