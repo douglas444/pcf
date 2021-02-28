@@ -4,7 +4,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class CustomExceptionMessage {
 
-    public static String build(final Exception exception) {
+    public static String buildIgnoringPCFStackTrace(final Exception exception) {
 
         final String[] stack = ExceptionUtils.getRootCauseStackTrace(exception.getCause());
 
@@ -20,6 +20,24 @@ public class CustomExceptionMessage {
             } else {
                 break;
             }
+        }
+
+        return message.toString();
+
+    }
+
+    public static String build(final Exception exception) {
+
+        final String[] stack = ExceptionUtils.getRootCauseStackTrace(exception.getCause());
+
+        if (stack.length == 0) {
+            return ExceptionUtils.getRootCauseMessage(exception);
+        }
+
+        StringBuilder message = new StringBuilder();
+
+        for (final String line : stack) {
+            message.append("\n    ").append(line);
         }
 
         return message.toString();

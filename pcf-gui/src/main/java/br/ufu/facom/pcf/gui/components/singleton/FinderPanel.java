@@ -152,31 +152,31 @@ public class FinderPanel extends JPanel implements Persistent {
 
     private void configurePaths(final List<File> paths) {
 
+        final HashMap<Class<?>, HashMap<String, Object>> instancesMapByClass;
+
         try {
-
-            final HashMap<Class<?>, HashMap<String, Object>> instancesMapByClass =
-                    ClassLoaderService.digestClasspathArray(paths.toArray(new File[]{}));
-
-            ConfigurationPanel.getInstance().getInterceptableConfigurator()
-                    .setCmbInstances(instancesMapByClass.get(Interceptable.class));
-            ConfigurationPanel.getInstance().getHighLevelCategorizerConfigurator()
-                    .setCmbInstances(instancesMapByClass.get(HighLevelCategorizer.class));
-            ConfigurationPanel.getInstance().getLowLevelCategorizerConfigurator()
-                    .setCmbInstances(instancesMapByClass.get(LowLevelCategorizer.class));
-
-            final StringBuilder builder = new StringBuilder();
-
-            for (final File file : paths) {
-                builder.append(file.getAbsolutePath()).append("; ");
-            }
-
-            this.txtPath.setText(builder.toString());
-
+            instancesMapByClass = ClassLoaderService.digestClasspathArray(paths.toArray(new File[]{}));
         } catch (ServiceException e) {
             final String message = e.getMessage() + CustomExceptionMessage.build(e);
             JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                     "Error", JOptionPane.ERROR_MESSAGE);
-
+            return;
         }
+
+        ConfigurationPanel.getInstance().getInterceptableConfigurator()
+                .setCmbInstances(instancesMapByClass.get(Interceptable.class));
+        ConfigurationPanel.getInstance().getHighLevelCategorizerConfigurator()
+                .setCmbInstances(instancesMapByClass.get(HighLevelCategorizer.class));
+        ConfigurationPanel.getInstance().getLowLevelCategorizerConfigurator()
+                .setCmbInstances(instancesMapByClass.get(LowLevelCategorizer.class));
+
+        final StringBuilder builder = new StringBuilder();
+
+        for (final File file : paths) {
+            builder.append(file.getAbsolutePath()).append("; ");
+        }
+
+        this.txtPath.setText(builder.toString());
+
     }
 }

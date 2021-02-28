@@ -25,7 +25,7 @@ public class OutputDialog extends JDialog {
                 try {
                     ExecutionController.stop();
                 } catch (ServiceException e) {
-                    final String message = e.getMessage() + CustomExceptionMessage.build(e);
+                    final String message = e.getMessage() + CustomExceptionMessage.buildIgnoringPCFStackTrace(e);
                     JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
