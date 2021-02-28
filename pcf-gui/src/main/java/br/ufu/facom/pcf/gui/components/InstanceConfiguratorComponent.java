@@ -4,7 +4,7 @@ import br.ufu.facom.pcf.core.Configurable;
 import br.ufu.facom.pcf.gui.components.singleton.ConfigurationPanel;
 import br.ufu.facom.pcf.gui.components.singleton.MainFrame;
 import br.ufu.facom.pcf.gui.components.singleton.VariationPanel;
-import br.ufu.facom.pcf.gui.service.CustomExceptionMessage;
+import br.ufu.facom.pcf.gui.exception.CustomExceptionMessage;
 import br.ufu.facom.pcf.gui.service.SpinnerUtil;
 
 import javax.swing.*;
@@ -140,8 +140,7 @@ public class InstanceConfiguratorComponent extends JPanel {
 
                     final String message = "Error while calling getNumericParameters or " +
                             "getNominalParameters from Configurable: "
-                            + exception.getMessage() + "\n    "
-                            + CustomExceptionMessage.build(exception);
+                            + exception.getMessage() + CustomExceptionMessage.build(exception);
 
                     JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                             "Error", JOptionPane.ERROR_MESSAGE);
@@ -158,7 +157,7 @@ public class InstanceConfiguratorComponent extends JPanel {
 
                     final String message = "Error while calling getNumericParameters "
                             + "or getNominalParameters from Configurable: "
-                            + exception.getMessage() + "\n    "
+                            + exception.getMessage()
                             + CustomExceptionMessage.build(exception);
 
                     JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
@@ -177,7 +176,7 @@ public class InstanceConfiguratorComponent extends JPanel {
 
                     final String message = "Error while calling getNumericParameters or "
                             + "getNominalParameters from Configurable: "
-                            + exception.getMessage() + "\n    "
+                            + exception.getMessage()
                             + CustomExceptionMessage.build(exception);
 
                     JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
@@ -307,7 +306,7 @@ public class InstanceConfiguratorComponent extends JPanel {
 
                 final String message = "Error while calling getNumericParameters or "
                         + "getNominalParameters from Configurable: "
-                        + exception.getMessage() + "\n    "
+                        + exception.getMessage()
                         + CustomExceptionMessage.build(exception);
 
                 JOptionPane.showMessageDialog(MainFrame.getInstance(), message,

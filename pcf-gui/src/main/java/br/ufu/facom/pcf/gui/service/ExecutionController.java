@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class ExecutionController {
 
     private static final String lineFormat = "\n%1$9s, %2$9s, %3$9s, %4$9s, %5$9s, %6$9s, %7$9s, " +
-            "%8$9s, %9$9s, %10$9s, %11$9s, %12$9s";
+            "%8$9s, %9$9s, %10$9s, %11$9s, %12$9s, %13$9s, %14$9s, %15$9s, %16$9s";
 
     public static void stop() throws ServiceException {
 
@@ -56,7 +56,6 @@ public class ExecutionController {
                                final Configurable configurable) throws ServiceException {
 
         try {
-            final Interceptor interceptor = new Interceptor(highLevelCategorizer, lowLevelCategorizer);
             final List<String> headers = new ArrayList<>();
             headers.add("v_param");
             headers.addAll(EvaluationSummary.getHeaders());
@@ -64,6 +63,7 @@ public class ExecutionController {
 
             for (int i = 0; i < times; ++i) {
 
+                final Interceptor interceptor = new Interceptor(highLevelCategorizer, lowLevelCategorizer);
                 if (interceptable.execute(interceptor)) {
 
                     final double parameterValue = configurable.getNumericParameters().get(parameter);

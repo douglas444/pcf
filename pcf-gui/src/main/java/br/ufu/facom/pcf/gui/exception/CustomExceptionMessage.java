@@ -1,4 +1,4 @@
-package br.ufu.facom.pcf.gui.service;
+package br.ufu.facom.pcf.gui.exception;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -10,10 +10,19 @@ public class CustomExceptionMessage {
 
         if (stack.length == 0) {
             return ExceptionUtils.getRootCauseMessage(exception);
-        } else if (stack.length == 1) {
-            return stack[0];
-        } else {
-            return stack[0] + "\n    " + stack[1];
         }
+
+        StringBuilder message = new StringBuilder();
+
+        for (final String line : stack) {
+            if (!line.contains("br.ufu.facom.pcf")) {
+                message.append("\n    ").append(line);
+            } else {
+                break;
+            }
+        }
+
+        return message.toString();
+
     }
 }

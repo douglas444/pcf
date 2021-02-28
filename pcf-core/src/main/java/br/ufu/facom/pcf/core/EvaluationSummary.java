@@ -207,32 +207,68 @@ public class EvaluationSummary {
         return this.corrupted / (double) (this.trueUnreliable + this.falseReliable);
     }
 
+    public int highLevelCategorizerConsultationsNovelty() {
+        return this.highLevelTrueNovelty + this.highLevelFalseKnown;
+    }
+
+    public int highLevelCategorizerConsultationsKnown() {
+        return this.highLevelTrueKnown + this.highLevelFalseNovelty;
+    }
+
+    public int lowLevelCategorizerConsultationsNovelty() {
+        return this.lowLevelTrueNovelty + this.lowLevelFalseKnown;
+    }
+
+    public int lowLevelCategorizerConsultationsKnown() {
+        return this.lowLevelTrueKnown + this.lowLevelFalseNovelty;
+    }
+
     @Override
     public String toString() {
 
         return
                 "\nCONFIDENCE METER" +
-                "\nConfusion matrix: " + confidenceMeterConfusionMatrixToString() +
-                "\nNumber of interceptions: " + (this.trueUnreliable + this.falseUnreliable
-                        + this.trueReliable + this.falseReliable) +
-                "\nPrecision: " + calculatePrecision() +
-                "\nRecall: " + calculateRecall() +
-                "\nF1: " + calculateF1() +
+                "\nConfusion matrix: " +
+                        confidenceMeterConfusionMatrixToString() +
+                "\nPrecision: " +
+                        calculatePrecision() +
+                "\nRecall: " +
+                        calculateRecall() +
+                "\nF1: " +
+                        calculateF1() +
                 "\n\nHIGH-LEVEL CATEGORIZER" +
-                "\nCategorizer confusion matrix: " + highLevelCategorizerConfusionMatrixToString() +
-                "\nAccuracy: " + calculateHighLevelCategorizerAccuracy() +
-                "\nAccuracy for known patterns: " + calculateHighLevelCategorizerAccuracyForKnownPrediction() +
-                "\nAccuracy for novel patterns: " + calculateHighLevelCategorizerAccuracyForNoveltyPrediction() +
+                "\nCategorizer confusion matrix: " +
+                        highLevelCategorizerConfusionMatrixToString() +
+                "\nConsulted known patterns (hi_cons_k): " +
+                        highLevelCategorizerConsultationsKnown() +
+                "\nConsulted novelty patterns (hi_cons_n): " +
+                        highLevelCategorizerConsultationsNovelty() +
+                "\nAccuracy (hi_acc): " +
+                        calculateHighLevelCategorizerAccuracy() +
+                "\nAccuracy for known patterns (hi_acc_k): " +
+                        calculateHighLevelCategorizerAccuracyForKnownPrediction() +
+                "\nAccuracy for novel patterns (hi_acc_n): " +
+                        calculateHighLevelCategorizerAccuracyForNoveltyPrediction() +
                 "\n\nLOW-LEVEL CATEGORIZER" +
-                "\nCategorization confusion matrix: " + lowLevelCategorizerConfusionMatrixToString() +
-                "\nRecovery confusion matrix: " + recoveryConfusionMatrixToString() +
-                "\nAccuracy: " + calculateLowLevelCategorizerAccuracy() +
-                "\nAccuracy for known patterns: " + calculateLowLevelCategorizerAccuracyForKnownPrediction() +
-                "\nAccuracy for novel patterns: " + calculateLowLevelCategorizerAccuracyForNoveltyPrediction() +
-                "\nConsultations: " + (this.trueUnreliable + this.falseUnreliable) +
+                "\nCategorization confusion matrix: " +
+                        lowLevelCategorizerConfusionMatrixToString() +
+                "\nRecovery confusion matrix: " +
+                        recoveryConfusionMatrixToString() +
+                "\nConsulted known patterns (lo_cons_k): " +
+                        lowLevelCategorizerConsultationsKnown() +
+                "\nConsulted novelty patterns (lo_cons_n): " +
+                        lowLevelCategorizerConsultationsNovelty() +
+                "\nAccuracy (lo_acc): " +
+                        calculateLowLevelCategorizerAccuracy() +
+                "\nAccuracy for known patterns (lo_acc_k): " +
+                        calculateLowLevelCategorizerAccuracyForKnownPrediction() +
+                "\nAccuracy for novel patterns (lo_acc_n): " +
+                        calculateLowLevelCategorizerAccuracyForNoveltyPrediction() +
                 "\n\nFINAL MEASURES" +
-                "\nError Recovery: " + calculateErrorRecovery() +
-                "\nError Introduction: " + calculateErrorIntroduction();
+                "\nError Recovery (err_rec): " +
+                        calculateErrorRecovery() +
+                "\nError Introduction (err_intro): " +
+                        calculateErrorIntroduction();
     }
 
     public List<Double> getValues() {
@@ -241,29 +277,36 @@ public class EvaluationSummary {
                 calculatePrecision(),
                 calculateRecall(),
                 calculateF1(),
+                (double) highLevelCategorizerConsultationsKnown(),
+                (double) highLevelCategorizerConsultationsNovelty(),
                 calculateHighLevelCategorizerAccuracy(),
                 calculateHighLevelCategorizerAccuracyForKnownPrediction(),
                 calculateHighLevelCategorizerAccuracyForNoveltyPrediction(),
+                (double) lowLevelCategorizerConsultationsKnown(),
+                (double) lowLevelCategorizerConsultationsNovelty(),
                 calculateLowLevelCategorizerAccuracy(),
                 calculateLowLevelCategorizerAccuracyForKnownPrediction(),
                 calculateLowLevelCategorizerAccuracyForNoveltyPrediction(),
-                (double) (this.trueUnreliable + this.falseUnreliable),
                 calculateErrorRecovery(),
                 calculateErrorIntroduction());
     }
 
     public static List<String> getHeaders() {
 
-        return Arrays.asList("precision",
+        return Arrays.asList(
+                "precision",
                 "recall",
                 "f1",
+                "hi_cons_k",
+                "hi_cons_n",
                 "hi_acc",
                 "hi_acc_k",
                 "hi_acc_n",
+                "lo_cons_k",
+                "lo_cons_n",
                 "lo_acc",
                 "lo_acc_k",
                 "lo_acc_n",
-                "consult",
                 "err_rec",
                 "err_intro");
     }
