@@ -140,7 +140,7 @@ public class InstanceConfiguratorComponent extends JPanel {
 
                     final String message = "Error while calling getNumericParameters or " +
                             "getNominalParameters from Configurable: "
-                            + exception.getMessage() + CustomExceptionMessage.buildIgnoringPCFStackTrace(exception);
+                            + exception.getMessage() + CustomExceptionMessage.build(exception);
 
                     JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                             "Error", JOptionPane.ERROR_MESSAGE);
@@ -158,7 +158,7 @@ public class InstanceConfiguratorComponent extends JPanel {
                     final String message = "Error while calling getNumericParameters "
                             + "or getNominalParameters from Configurable: "
                             + exception.getMessage()
-                            + CustomExceptionMessage.buildIgnoringPCFStackTrace(exception);
+                            + CustomExceptionMessage.build(exception);
 
                     JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                             "Error", JOptionPane.ERROR_MESSAGE);
@@ -177,7 +177,7 @@ public class InstanceConfiguratorComponent extends JPanel {
                     final String message = "Error while calling getNumericParameters or "
                             + "getNominalParameters from Configurable: "
                             + exception.getMessage()
-                            + CustomExceptionMessage.buildIgnoringPCFStackTrace(exception);
+                            + CustomExceptionMessage.build(exception);
 
                     JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                             "Error", JOptionPane.ERROR_MESSAGE);
@@ -307,7 +307,7 @@ public class InstanceConfiguratorComponent extends JPanel {
                 final String message = "Error while calling getNumericParameters or "
                         + "getNominalParameters from Configurable: "
                         + exception.getMessage()
-                        + CustomExceptionMessage.buildIgnoringPCFStackTrace(exception);
+                        + CustomExceptionMessage.build(exception);
 
                 JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                         "Error", JOptionPane.ERROR_MESSAGE);

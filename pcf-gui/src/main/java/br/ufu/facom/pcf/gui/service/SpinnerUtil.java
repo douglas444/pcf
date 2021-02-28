@@ -14,7 +14,7 @@ public class SpinnerUtil {
 
             final String message = "Cannot validate field " + fieldName
                     + ". Reverting to previous value. "
-                    + CustomExceptionMessage.buildIgnoringPCFStackTrace(e);
+                    + CustomExceptionMessage.build(e);
 
             JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                     "Error", JOptionPane.ERROR_MESSAGE);

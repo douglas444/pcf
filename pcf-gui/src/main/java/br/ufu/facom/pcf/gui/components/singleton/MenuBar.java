@@ -70,7 +70,7 @@ public class MenuBar extends JMenuBar {
                 final URL url = new URL("https://github.com/douglas444/pcf/blob/main/README.md");
                 WebPageOpener.openWebpage(url);
             } catch (MalformedURLException | ServiceException e) {
-                final String message = e.getMessage() + CustomExceptionMessage.buildIgnoringPCFStackTrace(e);
+                final String message = e.getMessage() + CustomExceptionMessage.build(e);
                 JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -80,7 +80,7 @@ public class MenuBar extends JMenuBar {
             try {
                 Persistence.load();
             } catch (ServiceException e) {
-                final String message = e.getMessage() + CustomExceptionMessage.buildIgnoringPCFStackTrace(e);
+                final String message = e.getMessage() + CustomExceptionMessage.build(e);
                 JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -90,7 +90,7 @@ public class MenuBar extends JMenuBar {
             try {
                 Persistence.save();
             } catch (ServiceException e) {
-                final String message = e.getMessage() + CustomExceptionMessage.buildIgnoringPCFStackTrace(e);
+                final String message = e.getMessage() + CustomExceptionMessage.build(e);
                 JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -102,7 +102,7 @@ public class MenuBar extends JMenuBar {
             try {
                 ExecutionController.stop();
             } catch (ServiceException e) {
-                final String message = e.getMessage() + CustomExceptionMessage.buildIgnoringPCFStackTrace(e);
+                final String message = e.getMessage() + CustomExceptionMessage.build(e);
                 JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -114,7 +114,7 @@ public class MenuBar extends JMenuBar {
             try {
                 ExecutionController.stop();
             } catch (ServiceException e) {
-                final String message = e.getMessage() + CustomExceptionMessage.buildIgnoringPCFStackTrace(e);
+                final String message = e.getMessage() + CustomExceptionMessage.build(e);
                 JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -163,7 +163,7 @@ public class MenuBar extends JMenuBar {
                                 lowLevelCategorizer);
 
                     } catch (ServiceException e) {
-                        final String message = e.getMessage() + CustomExceptionMessage.buildIgnoringPCFStackTrace(e);
+                        final String message = e.getMessage() + CustomExceptionMessage.build(e);
                         JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                                 "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -191,7 +191,7 @@ public class MenuBar extends JMenuBar {
                                 VariationPanel.getInstance().getConfigurable());
 
                     } catch (ServiceException e) {
-                        final String message = e.getMessage() + CustomExceptionMessage.buildIgnoringPCFStackTrace(e);
+                        final String message = e.getMessage() + CustomExceptionMessage.build(e);
                         JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                                 "Error", JOptionPane.ERROR_MESSAGE);
                     }
