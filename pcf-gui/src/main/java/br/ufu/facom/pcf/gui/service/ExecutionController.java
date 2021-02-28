@@ -37,6 +37,9 @@ public class ExecutionController {
             final Interceptor interceptor = new Interceptor(highLevelCategorizer, lowLevelCategorizer);
 
             if (interceptable.execute(interceptor)) {
+                if (interceptor.getLogs().isEmpty()) {
+                    throw new Exception("Interceptor's intercept method was not called.");
+                }
                 final EvaluationSummary evaluationSummary = new EvaluationSummary(interceptor.getLogs());
                 System.out.println(evaluationSummary.toString());
             } else {
