@@ -8,7 +8,7 @@ public class MainFrame extends JFrame {
     private static MainFrame instance;
 
     private MainFrame() {
-        this.setTitle("Active Pattern Learning GUI");
+        this.setTitle("Pattern Categorizer Framework GUI");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(650, 500);
         this.setResizable(true);
