@@ -67,9 +67,9 @@ public class ClassLoaderService {
                     try {
                         Constructor<?> constructor = classReference.getConstructor();
                         instance = constructor.newInstance();
-                    } catch (NoSuchMethodException ex) {
+                    } catch (Exception e) {
                         continue;
-                    } catch (NoClassDefFoundError | Exception e) {
+                    } catch (NoClassDefFoundError e) {
                         throw new ServiceException("Failed to load class " + className, e);
                     }
 

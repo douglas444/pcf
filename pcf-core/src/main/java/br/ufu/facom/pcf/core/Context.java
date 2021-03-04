@@ -5,22 +5,14 @@ import java.util.Set;
 
 public class Context {
 
-    private Category realCategory;
     private Category predictedCategory;
+    private Category realCategory;
     private ClusterSummary patternClusterSummary;
-    private List<double[]> samplesAttributes;
-    private List<Integer> samplesLabels;
+    private double[][] samplesAttributes;
+    private int[] samplesLabels;
+    private boolean[] isPreLabeled;
     private List<ClusterSummary> clusterSummaries;
     private Set<Integer> knownLabels;
-
-    public Category getRealCategory() {
-        return realCategory;
-    }
-
-    public Context setRealCategory(Category realCategory) {
-        this.realCategory = realCategory;
-        return this;
-    }
 
     public Category getPredictedCategory() {
         return predictedCategory;
@@ -28,24 +20,6 @@ public class Context {
 
     public Context setPredictedCategory(Category predictedCategory) {
         this.predictedCategory = predictedCategory;
-        return this;
-    }
-
-    public List<double[]> getSamplesAttributes() {
-        return samplesAttributes;
-    }
-
-    public Context setSamplesAttributes(List<double[]> samplesAttributes) {
-        this.samplesAttributes = samplesAttributes;
-        return this;
-    }
-
-    public List<Integer> getSamplesLabels() {
-        return samplesLabels;
-    }
-
-    public Context setSamplesLabels(List<Integer> samplesLabels) {
-        this.samplesLabels = samplesLabels;
         return this;
     }
 
@@ -73,6 +47,42 @@ public class Context {
 
     public Context setKnownLabels(Set<Integer> knownLabels) {
         this.knownLabels = knownLabels;
+        return this;
+    }
+
+    public Category getRealCategory() {
+        return realCategory;
+    }
+
+    public Context setRealCategory(Category realCategory) {
+        this.realCategory = realCategory;
+        return this;
+    }
+
+    public double[][] getSamplesAttributes() {
+        return samplesAttributes;
+    }
+
+    public Context setSamplesAttributes(double[][] samplesAttributes) {
+        this.samplesAttributes = samplesAttributes;
+        return this;
+    }
+
+    public int[] getSamplesLabels() {
+        return samplesLabels;
+    }
+
+    public Context setSamplesLabels(int[] samplesLabels) {
+        this.samplesLabels = samplesLabels;
+        return this;
+    }
+
+    public boolean[] getIsPreLabeled() {
+        return isPreLabeled;
+    }
+
+    public Context setIsPreLabeled(boolean[] isPreLabeled) {
+        this.isPreLabeled = isPreLabeled;
         return this;
     }
 }
