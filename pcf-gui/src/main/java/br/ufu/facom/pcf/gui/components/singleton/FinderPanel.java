@@ -5,9 +5,9 @@ import br.ufu.facom.pcf.core.Interceptable;
 import br.ufu.facom.pcf.core.LowLevelCategorizer;
 import br.ufu.facom.pcf.gui.components.ChooserForFileListAccessory;
 import br.ufu.facom.pcf.gui.components.FileListAccessory;
+import br.ufu.facom.pcf.gui.exception.CustomExceptionMessage;
 import br.ufu.facom.pcf.gui.exception.ServiceException;
 import br.ufu.facom.pcf.gui.service.ClassLoaderService;
-import br.ufu.facom.pcf.gui.exception.CustomExceptionMessage;
 import br.ufu.facom.pcf.gui.service.persistence.Persistent;
 import br.ufu.facom.pcf.gui.service.persistence.XMLConfiguration;
 

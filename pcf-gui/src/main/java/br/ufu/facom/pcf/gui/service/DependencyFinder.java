@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 public class DependencyFinder {
 
     public static Set<Class<?>> getDependencies(final Class<?> classToCheck)

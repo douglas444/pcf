@@ -1,10 +1,10 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
+import br.ufu.facom.pcf.gui.components.InstanceConfiguratorComponent;
 import br.ufu.facom.pcf.gui.service.persistence.NominalParameterValue;
 import br.ufu.facom.pcf.gui.service.persistence.NumericParameterValue;
 import br.ufu.facom.pcf.gui.service.persistence.Persistent;
 import br.ufu.facom.pcf.gui.service.persistence.XMLConfiguration;
-import br.ufu.facom.pcf.gui.components.InstanceConfiguratorComponent;
 
 import javax.swing.*;
 import java.awt.*;

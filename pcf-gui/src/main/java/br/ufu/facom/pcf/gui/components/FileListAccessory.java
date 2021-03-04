@@ -1,10 +1,10 @@
 package br.ufu.facom.pcf.gui.components;
 
+import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import javax.swing.*;
 
 public class FileListAccessory extends JComponent implements PropertyChangeListener {
 

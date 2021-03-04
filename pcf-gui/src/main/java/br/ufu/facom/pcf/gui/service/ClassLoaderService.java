@@ -1,8 +1,8 @@
 package br.ufu.facom.pcf.gui.service;
 
-import br.ufu.facom.pcf.core.LowLevelCategorizer;
 import br.ufu.facom.pcf.core.HighLevelCategorizer;
 import br.ufu.facom.pcf.core.Interceptable;
+import br.ufu.facom.pcf.core.LowLevelCategorizer;
 import br.ufu.facom.pcf.gui.exception.ServiceException;
 
 import java.io.File;
@@ -11,7 +11,10 @@ import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 

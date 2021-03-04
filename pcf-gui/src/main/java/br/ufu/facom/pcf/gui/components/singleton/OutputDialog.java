@@ -1,7 +1,7 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
-import br.ufu.facom.pcf.gui.exception.ServiceException;
 import br.ufu.facom.pcf.gui.exception.CustomExceptionMessage;
+import br.ufu.facom.pcf.gui.exception.ServiceException;
 import br.ufu.facom.pcf.gui.service.ExecutionController;
 
 import javax.swing.*;
