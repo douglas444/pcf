@@ -29,6 +29,7 @@ None
 * JAXB API 2.3.0 (available at Maven Central Repository)
 * Jakarta XML Binding API 2.3.2 (available at Maven Central Repository)
 * JAXB Runtime 2.3.2 (available at Maven Central Repository)
+* pcf-core 1.0-SNAPSHOT (https://github.com/douglas444/pcf)
 
 ## How do I build/install the JAR from the source code?
 
