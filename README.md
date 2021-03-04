@@ -58,7 +58,7 @@ to your project's pom.xml file (edit the version if necessary):
 </dependency>
 ```
 
-## How to start pcf-gui application?
+## How to start pcf-gui application
 
 Once you have the ```pcf-gui-jar-with-dependencies.jar```, 
 you can execute it through the following command line: ```java -jar pcf-gui-jar-with-dependencies.jar```
