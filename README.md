@@ -4,7 +4,6 @@ This is a framework for pattern categorization. It is composed of two modules:
 *pcf-core* and *pcf-gui*. The *pcf-core* defines the Java's interfaces that an 
 external project needs to implement in order to be compatible with this framework. 
 There are three main Java's interfaces: *Interceptable*, *HighLevelCategorizer* and *LowLevelCategorizer*.
-A project is said to be compatible with one of those Java's interfaces if the project implements it.
 
 The *pcf-gui* module is an application with a graphical interface that allows the user to load 
 implementations of the Java's interfaces defined by the *pcf-core* module, 
