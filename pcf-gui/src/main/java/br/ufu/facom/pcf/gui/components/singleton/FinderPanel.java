@@ -46,7 +46,7 @@ public class FinderPanel extends JPanel implements Persistent {
         this.chooser.setMultiSelectionEnabled(true);
         this.chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         this.chooser.setAcceptAllFileFilterUsed(false);
-        this.chooser.setFileHidingEnabled(false);
+        this.chooser.setFileHidingEnabled(true);
         this.chooser.setFileFilter(
                 new FileNameExtensionFilter("Classpath folders; JAR files;", "jar"));
 

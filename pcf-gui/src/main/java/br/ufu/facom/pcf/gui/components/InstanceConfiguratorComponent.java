@@ -292,6 +292,9 @@ public class InstanceConfiguratorComponent extends JPanel {
     public Object configureAndGet() {
 
         final String selectedItem = (String) this.cmbInstances.getSelectedItem();
+
+        System.out.println("Configuring " + selectedItem);
+
         final Object selectedInstance = this.instanceByName.getOrDefault(selectedItem, null);
 
         if (selectedInstance instanceof Configurable) {
@@ -299,9 +302,21 @@ public class InstanceConfiguratorComponent extends JPanel {
                 ((Configurable) selectedInstance)
                         .getNominalParameters()
                         .putAll(this.getNominalParameterValueByName());
+
+                ((Configurable) selectedInstance).getNominalParameters().forEach((k, v) -> {
+                    System.out.println("  \"" + k + "\"" + " = " + v);
+                });
+
                 ((Configurable) selectedInstance)
                         .getNumericParameters()
                         .putAll(this.getNumericParameterValueByName());
+
+                ((Configurable) selectedInstance).getNumericParameters().forEach((k, v) -> {
+                    System.out.println("  \"" + k + "\"" + " = " + v);
+                });
+
+                System.out.println();
+
             } catch (Exception exception) {
 
                 final String message = "Error while calling getNumericParameters or "

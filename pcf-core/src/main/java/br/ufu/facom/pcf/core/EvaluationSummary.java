@@ -10,15 +10,20 @@ public class EvaluationSummary {
     private final int highLevelTrueNovelty;
     private final int highLevelFalseNovelty;
 
+    private final int baseTrueKnown;
+    private final int baseFalseKnown;
+    private final int baseTrueNovelty;
+    private final int baseFalseNovelty;
+
     private final int lowLevelTrueKnown;
     private final int lowLevelFalseKnown;
     private final int lowLevelTrueNovelty;
     private final int lowLevelFalseNovelty;
 
-    private final int trueUnreliable;
-    private final int falseUnreliable;
-    private final int trueReliable;
-    private final int falseReliable;
+    private final int queryTruePositive;
+    private final int queryFalsePositive;
+    private final int queryTrueNegative;
+    private final int queryFalseNegative;
 
     private final int recovered;
     private final int unrecovered;
@@ -31,22 +36,22 @@ public class EvaluationSummary {
             throw new IllegalArgumentException("Cannot calculate measures. No log was registered.");
         }
 
-        this.trueUnreliable = (int) logs.stream()
+        this.queryTruePositive = (int) logs.stream()
                 .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
                 .filter(log -> log.getRealCategory() != log.getBasePredictedCategory())
                 .count();
 
-        this.falseUnreliable = (int) logs.stream()
+        this.queryFalsePositive = (int) logs.stream()
                 .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
                 .filter(log -> log.getRealCategory() == log.getBasePredictedCategory())
                 .count();
 
-        this.trueReliable = (int) logs.stream()
+        this.queryTrueNegative = (int) logs.stream()
                 .filter(log -> log.getConfidence() == Confidence.RELIABLE)
                 .filter(log -> log.getRealCategory() == log.getBasePredictedCategory())
                 .count();
 
-        this.falseReliable = (int) logs.stream()
+        this.queryFalseNegative = (int) logs.stream()
                 .filter(log -> log.getConfidence() == Confidence.RELIABLE)
                 .filter(log -> log.getRealCategory() != log.getBasePredictedCategory())
                 .count();
@@ -69,6 +74,26 @@ public class EvaluationSummary {
         this.highLevelFalseNovelty = (int) logs.stream()
                 .filter(log -> log.getRealCategory() != log.getHighLevelPredictedCategory())
                 .filter(log -> log.getHighLevelPredictedCategory() == Category.NOVELTY)
+                .count();
+
+        this.baseTrueKnown = (int) logs.stream()
+                .filter(log -> log.getRealCategory() == log.getHighLevelPredictedCategory())
+                .filter(log -> log.getBasePredictedCategory() == Category.KNOWN)
+                .count();
+
+        this.baseFalseKnown = (int) logs.stream()
+                .filter(log -> log.getRealCategory() != log.getHighLevelPredictedCategory())
+                .filter(log -> log.getBasePredictedCategory() == Category.KNOWN)
+                .count();
+
+        this.baseTrueNovelty = (int) logs.stream()
+                .filter(log -> log.getRealCategory() == log.getHighLevelPredictedCategory())
+                .filter(log -> log.getBasePredictedCategory() == Category.NOVELTY)
+                .count();
+
+        this.baseFalseNovelty = (int) logs.stream()
+                .filter(log -> log.getRealCategory() != log.getHighLevelPredictedCategory())
+                .filter(log -> log.getBasePredictedCategory() == Category.NOVELTY)
                 .count();
 
         this.lowLevelTrueKnown = (int) logs.stream()
@@ -117,26 +142,35 @@ public class EvaluationSummary {
 
     }
 
-    public double calculatePrecision() {
-        return this.trueUnreliable / (double) (this.trueUnreliable + this.falseUnreliable);
+    public double calculateQueryingPrecision() {
+        return this.queryTruePositive / (double) (this.queryTruePositive + this.queryFalsePositive);
     }
 
-    public double calculateRecall() {
-        return this.trueUnreliable / (double) (this.trueUnreliable + this.falseReliable);
+    public double calculateQueryingSensitivity() {
+        return this.queryTruePositive / (double) (this.queryTruePositive + this.queryFalseNegative);
     }
 
-    public double calculateF1() {
-        final double recall = calculateRecall();
-        final double precision = calculatePrecision();
+    public double calculateQueryingF1() {
+        final double recall = calculateQueryingSensitivity();
+        final double precision = calculateQueryingPrecision();
         return 2 * recall * precision / (recall + precision);
     }
 
-    public String confidenceMeterConfusionMatrixToString() {
+    public String clusterQueryingConfusionMatrixToString() {
         return "{" +
-                "trueUnreliable=" + this.trueUnreliable +
-                ", falseUnreliable=" + this.falseUnreliable +
-                ", trueReliable=" + this.trueReliable +
-                ", falseReliable=" + this.falseReliable +
+                "truePositive=" + this.queryTruePositive +
+                ", falsePositive=" + this.queryFalsePositive +
+                ", trueNegative=" + this.queryTrueNegative +
+                ", falseNegative=" + this.queryFalseNegative +
+                "}";
+    }
+
+    public String baseCategorizerConfusionMatrixToString() {
+        return "{" +
+                "trueKnown=" + this.baseTrueKnown +
+                ", falseKnown=" + this.baseFalseKnown +
+                ", trueNovelty=" + this.baseTrueNovelty +
+                ", falseNovelty=" + this.baseFalseNovelty +
                 "}";
     }
 
@@ -158,7 +192,7 @@ public class EvaluationSummary {
                 "}";
     }
 
-    public String recoveryConfusionMatrixToString() {
+    public String frameworkConfusionMatrixToString() {
         return "{" +
                 "recovered=" + this.recovered +
                 ", unrecovered=" + this.unrecovered +
@@ -167,11 +201,27 @@ public class EvaluationSummary {
                 "}";
     }
 
-    public double calculateHighLevelCategorizerAccuracyForNoveltyPrediction() {
+    public double calculateBaseCategorizerSensitivity() {
+        return this.baseTrueNovelty / (double) (this.baseTrueNovelty + this.baseFalseKnown);
+    }
+
+    public double calculateBaseCategorizerSpecificity() {
+        return this.baseTrueKnown / (double) (this.baseTrueKnown + this.baseFalseNovelty);
+    }
+
+    public double calculateBaseCategorizerAccuracy() {
+        return (this.baseTrueKnown + this.baseTrueNovelty) /
+                (double) (this.baseTrueKnown
+                        + this.baseFalseKnown
+                        + this.baseTrueNovelty
+                        + this.baseFalseNovelty);
+    }
+
+    public double calculateHighLevelCategorizerSensitivity() {
         return this.highLevelTrueNovelty / (double) (this.highLevelTrueNovelty + this.highLevelFalseKnown);
     }
 
-    public double calculateHighLevelCategorizerAccuracyForKnownPrediction() {
+    public double calculateHighLevelCategorizerSpecificity() {
         return this.highLevelTrueKnown / (double) (this.highLevelTrueKnown + this.highLevelFalseNovelty);
     }
 
@@ -183,11 +233,11 @@ public class EvaluationSummary {
                         + this.highLevelFalseNovelty);
     }
 
-    public double calculateLowLevelCategorizerAccuracyForNoveltyPrediction() {
+    public double calculateLowLevelCategorizerSensitivity() {
         return this.lowLevelTrueNovelty / (double) (this.lowLevelTrueNovelty + this.lowLevelFalseKnown);
     }
 
-    public double calculateLowLevelCategorizerAccuracyForKnownPrediction() {
+    public double calculateLowLevelCategorizerSpecificity() {
         return this.lowLevelTrueKnown / (double) (this.lowLevelTrueKnown + this.lowLevelFalseNovelty);
     }
 
@@ -200,11 +250,11 @@ public class EvaluationSummary {
     }
 
     public double calculateErrorRecovery() {
-        return this.recovered / (double) (this.trueUnreliable + this.falseReliable);
+        return this.recovered / (double) (this.queryTruePositive + this.queryFalseNegative);
     }
 
     public double calculateErrorIntroduction() {
-        return this.corrupted / (double) (this.trueUnreliable + this.falseReliable);
+        return this.corrupted / (double) (this.queryTruePositive + this.queryFalseNegative);
     }
 
     public int highLevelCategorizerConsultationsNovelty() {
@@ -227,45 +277,54 @@ public class EvaluationSummary {
     public String toString() {
 
         return
-                "\nCONFIDENCE METER" +
+                "\nCLUSTER QUERYING" +
                 "\nConfusion matrix: " +
-                        confidenceMeterConfusionMatrixToString() +
-                "\nPrecision: " +
-                        calculatePrecision() +
-                "\nRecall: " +
-                        calculateRecall() +
-                "\nF1: " +
-                        calculateF1() +
+                        clusterQueryingConfusionMatrixToString() +
+                "\nPrecision (precision): " +
+                        calculateQueryingPrecision() +
+                "\nSensitivity (sensitivi): " +
+                        calculateQueryingSensitivity() +
+                "\nF1 (_______f1): " +
+                        calculateQueryingF1() +
+                "\n\nBASE CATEGORIZER" +
+                "\nConfusion matrix: " +
+                baseCategorizerConfusionMatrixToString() +
+                "\nAccuracy: " +
+                calculateBaseCategorizerAccuracy() +
+                "\nSpecificity: " +
+                calculateBaseCategorizerSpecificity() +
+                "\nSensitivity: " +
+                calculateBaseCategorizerSensitivity() +
                 "\n\nHIGH-LEVEL CATEGORIZER" +
-                "\nCategorizer confusion matrix: " +
+                "\nConfusion matrix: " +
                         highLevelCategorizerConfusionMatrixToString() +
                 "\nConsulted known patterns (hi_cons_k): " +
                         highLevelCategorizerConsultationsKnown() +
                 "\nConsulted novelty patterns (hi_cons_n): " +
                         highLevelCategorizerConsultationsNovelty() +
-                "\nAccuracy (hi_acc): " +
+                "\nAccuracy (___hi_acc): " +
                         calculateHighLevelCategorizerAccuracy() +
-                "\nAccuracy for known patterns (hi_acc_k): " +
-                        calculateHighLevelCategorizerAccuracyForKnownPrediction() +
-                "\nAccuracy for novel patterns (hi_acc_n): " +
-                        calculateHighLevelCategorizerAccuracyForNoveltyPrediction() +
+                "\nSpecificity (hi_specif): " +
+                        calculateHighLevelCategorizerSpecificity() +
+                "\nSensitivity (hi_sensit): " +
+                        calculateHighLevelCategorizerSensitivity() +
                 "\n\nLOW-LEVEL CATEGORIZER" +
                 "\nCategorization confusion matrix: " +
                         lowLevelCategorizerConfusionMatrixToString() +
                 "\nRecovery confusion matrix: " +
-                        recoveryConfusionMatrixToString() +
+                        frameworkConfusionMatrixToString() +
                 "\nConsulted known patterns (lo_cons_k): " +
                         lowLevelCategorizerConsultationsKnown() +
                 "\nConsulted novelty patterns (lo_cons_n): " +
                         lowLevelCategorizerConsultationsNovelty() +
-                "\nAccuracy (lo_acc): " +
+                "\nAccuracy (___lo_acc): " +
                         calculateLowLevelCategorizerAccuracy() +
-                "\nAccuracy for known patterns (lo_acc_k): " +
-                        calculateLowLevelCategorizerAccuracyForKnownPrediction() +
-                "\nAccuracy for novel patterns (lo_acc_n): " +
-                        calculateLowLevelCategorizerAccuracyForNoveltyPrediction() +
-                "\n\nFINAL MEASURES" +
-                "\nError Recovery (err_rec): " +
+                "\nSpecificity (lo_specif): " +
+                        calculateLowLevelCategorizerSpecificity() +
+                "\nSensitivity (lo_sensit): " +
+                        calculateLowLevelCategorizerSensitivity() +
+                "\n\nFRAMEWORK IMPACT" +
+                "\nError Recovery (__err_rec): " +
                         calculateErrorRecovery() +
                 "\nError Introduction (err_intro): " +
                         calculateErrorIntroduction();
@@ -274,19 +333,19 @@ public class EvaluationSummary {
     public List<Double> getValues() {
 
         return Arrays.asList(
-                calculatePrecision(),
-                calculateRecall(),
-                calculateF1(),
+                calculateQueryingPrecision(),
+                calculateQueryingSensitivity(),
+                calculateQueryingF1(),
                 (double) highLevelCategorizerConsultationsKnown(),
                 (double) highLevelCategorizerConsultationsNovelty(),
                 calculateHighLevelCategorizerAccuracy(),
-                calculateHighLevelCategorizerAccuracyForKnownPrediction(),
-                calculateHighLevelCategorizerAccuracyForNoveltyPrediction(),
+                calculateHighLevelCategorizerSpecificity(),
+                calculateHighLevelCategorizerSensitivity(),
                 (double) lowLevelCategorizerConsultationsKnown(),
                 (double) lowLevelCategorizerConsultationsNovelty(),
                 calculateLowLevelCategorizerAccuracy(),
-                calculateLowLevelCategorizerAccuracyForKnownPrediction(),
-                calculateLowLevelCategorizerAccuracyForNoveltyPrediction(),
+                calculateLowLevelCategorizerSpecificity(),
+                calculateLowLevelCategorizerSensitivity(),
                 calculateErrorRecovery(),
                 calculateErrorIntroduction());
     }
@@ -295,19 +354,19 @@ public class EvaluationSummary {
 
         return Arrays.asList(
                 "precision",
-                "recall",
-                "f1",
+                "sensitivi",
+                "_______f1",
                 "hi_cons_k",
                 "hi_cons_n",
-                "hi_acc",
-                "hi_acc_k",
-                "hi_acc_n",
+                "___hi_acc",
+                "hi_specif",
+                "hi_sensit",
                 "lo_cons_k",
                 "lo_cons_n",
-                "lo_acc",
-                "lo_acc_k",
-                "lo_acc_n",
-                "err_rec",
+                "___lo_acc",
+                "lo_specif",
+                "lo_sensit",
+                "__err_rec",
                 "err_intro");
     }
 }

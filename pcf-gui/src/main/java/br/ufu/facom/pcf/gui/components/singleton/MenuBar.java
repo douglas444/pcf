@@ -119,6 +119,23 @@ public class MenuBar extends JMenuBar {
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
 
+            PrintStream originalStdOut = System.out;
+            PrintStream originalStdErr = System.out;
+
+            System.setErr(
+                    new PrintStream(
+                            new TextAreaOutputStream(
+                                    OutputPanel.getInstance().getTxtArea())));
+
+            if (VariationPanel.getInstance().isUnique()) {
+
+                System.setOut(
+                        new PrintStream(
+                                new TextAreaOutputStream(
+                                        OutputPanel.getInstance().getTxtArea())));
+
+            }
+
             this.interceptable = (Interceptable) ConfigurationPanel
                     .getInstance()
                     .getInterceptableConfigurator()
@@ -142,19 +159,6 @@ public class MenuBar extends JMenuBar {
 
                 if (VariationPanel.getInstance().isUnique()) {
 
-                    PrintStream originalStdOut = System.out;
-                    PrintStream originalStdErr = System.out;
-
-                    System.setOut(
-                            new PrintStream(
-                                    new TextAreaOutputStream(
-                                            OutputPanel.getInstance().getTxtArea())));
-
-                    System.setErr(
-                            new PrintStream(
-                                    new TextAreaOutputStream(
-                                            OutputPanel.getInstance().getTxtArea())));
-
                     try {
 
                         ExecutionController.execute(
@@ -168,12 +172,7 @@ public class MenuBar extends JMenuBar {
                                 "Error", JOptionPane.ERROR_MESSAGE);
                     }
 
-                    System.setOut(originalStdOut);
-                    System.setErr(originalStdErr);
-
                 } else {
-
-                    PrintStream originalStdErr = System.out;
 
                     System.setErr(
                             new PrintStream(
@@ -195,8 +194,10 @@ public class MenuBar extends JMenuBar {
                         JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                                 "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    System.setErr(originalStdErr);
                 }
+
+                System.setOut(originalStdOut);
+                System.setErr(originalStdErr);
                 FooterPanel.getInstance().setVisible(false);
             });
 
