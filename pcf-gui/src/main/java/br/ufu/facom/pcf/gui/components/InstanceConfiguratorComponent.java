@@ -128,14 +128,15 @@ public class InstanceConfiguratorComponent extends JPanel {
 
             final Object instance = this.instanceByName.get(selectedItem);
 
-            List<String> numericParameters = null;
-            List<String> nominalParameters = null;
-
             if (instance instanceof Configurable) {
+
                 final Configurable configurable = (Configurable) instance;
+
                 try {
-                    numericParameters = new ArrayList<>(configurable.getNumericParameters().keySet());
-                    nominalParameters = new ArrayList<>(configurable.getNominalParameters().keySet());
+
+                    this.setParameters(new ArrayList<>(configurable.getNumericParameters().keySet()), true);
+                    this.setParameters(new ArrayList<>(configurable.getNominalParameters().keySet()), false);
+
                 } catch (Exception exception) {
 
                     final String message = "Error while calling getNumericParameters or " +
@@ -145,14 +146,15 @@ public class InstanceConfiguratorComponent extends JPanel {
                     JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            }
 
-            if (numericParameters != null) {
-                this.setParameters(numericParameters, true);
-                final Configurable configurable = (Configurable) instance;
+
                 try {
+
                     configurable.getNumericParameters().forEach((key, value) ->
                             this.spinnerByParameterName.get(key).setValue(value));
+                    configurable.getNominalParameters().forEach((key, value) ->
+                            this.txtFieldByParameterName.get(key).setText(value));
+
                 } catch (Exception exception) {
 
                     final String message = "Error while calling getNumericParameters "
@@ -163,31 +165,17 @@ public class InstanceConfiguratorComponent extends JPanel {
                     JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
                             "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            }
 
-            if (nominalParameters != null) {
-                this.setParameters(nominalParameters, false);
-                final Configurable configurable = (Configurable) instance;
-
-                try {
-                    configurable.getNominalParameters().forEach((key, value) ->
-                            this.txtFieldByParameterName.get(key).setText(value));
-                } catch (Exception exception) {
-
-                    final String message = "Error while calling getNumericParameters or "
-                            + "getNominalParameters from Configurable: "
-                            + exception.getMessage()
-                            + CustomExceptionMessage.build(exception);
-
-                    JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                }
+            } else {
+                this.setParameters(new ArrayList<>(), true);
+                this.setParameters(new ArrayList<>(), false);
             }
 
             this.pnlNumericParameters.setVisible(
-                    !this.getNumericParameterValueByName().isEmpty());
+                    !this.spinnerByParameterName.isEmpty());
+
             this.pnlNominalParameters.setVisible(
-                    !this.getNominalParameterValueByName().isEmpty());
+                    !this.txtFieldByParameterName.isEmpty());
 
             VariationPanel.getInstance().setVisible(
                     ConfigurationPanel
