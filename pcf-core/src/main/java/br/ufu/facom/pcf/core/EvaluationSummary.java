@@ -77,22 +77,22 @@ public class EvaluationSummary {
                 .count();
 
         this.baseTrueKnown = (int) logs.stream()
-                .filter(log -> log.getRealCategory() == log.getHighLevelPredictedCategory())
+                .filter(log -> log.getRealCategory() == log.getBasePredictedCategory())
                 .filter(log -> log.getBasePredictedCategory() == Category.KNOWN)
                 .count();
 
         this.baseFalseKnown = (int) logs.stream()
-                .filter(log -> log.getRealCategory() != log.getHighLevelPredictedCategory())
+                .filter(log -> log.getRealCategory() != log.getBasePredictedCategory())
                 .filter(log -> log.getBasePredictedCategory() == Category.KNOWN)
                 .count();
 
         this.baseTrueNovelty = (int) logs.stream()
-                .filter(log -> log.getRealCategory() == log.getHighLevelPredictedCategory())
+                .filter(log -> log.getRealCategory() == log.getBasePredictedCategory())
                 .filter(log -> log.getBasePredictedCategory() == Category.NOVELTY)
                 .count();
 
         this.baseFalseNovelty = (int) logs.stream()
-                .filter(log -> log.getRealCategory() != log.getHighLevelPredictedCategory())
+                .filter(log -> log.getRealCategory() != log.getBasePredictedCategory())
                 .filter(log -> log.getBasePredictedCategory() == Category.NOVELTY)
                 .count();
 
@@ -250,11 +250,11 @@ public class EvaluationSummary {
     }
 
     public double calculateErrorRecovery() {
-        return this.recovered / (double) (this.queryTruePositive + this.queryFalseNegative);
+        return this.recovered / (double) (this.baseFalseKnown + this.baseFalseNovelty);
     }
 
     public double calculateErrorIntroduction() {
-        return this.corrupted / (double) (this.queryTruePositive + this.queryFalseNegative);
+        return this.corrupted / (double) (this.baseFalseKnown + this.baseFalseNovelty);
     }
 
     public int highLevelCategorizerConsultationsNovelty() {
@@ -288,13 +288,13 @@ public class EvaluationSummary {
                         calculateQueryingF1() +
                 "\n\nBASE CATEGORIZER" +
                 "\nConfusion matrix: " +
-                baseCategorizerConfusionMatrixToString() +
+                        baseCategorizerConfusionMatrixToString() +
                 "\nAccuracy: " +
-                calculateBaseCategorizerAccuracy() +
+                        calculateBaseCategorizerAccuracy() +
                 "\nSpecificity: " +
-                calculateBaseCategorizerSpecificity() +
+                        calculateBaseCategorizerSpecificity() +
                 "\nSensitivity: " +
-                calculateBaseCategorizerSensitivity() +
+                        calculateBaseCategorizerSensitivity() +
                 "\n\nHIGH-LEVEL CATEGORIZER" +
                 "\nConfusion matrix: " +
                         highLevelCategorizerConfusionMatrixToString() +

@@ -94,7 +94,7 @@ public class DependencyFinder {
     }
 
     private static void skipInterfaces(ByteBuffer readBuffer) {
-        readBuffer.position(readBuffer.getChar() * 2 + readBuffer.position());
+        ((java.nio.Buffer) readBuffer).position(readBuffer.getChar() * 2 + ((java.nio.Buffer) readBuffer).position());
     }
 
     private static void skipPastAccessFlagsThisClassAndSuperClass(
@@ -144,10 +144,10 @@ public class DependencyFinder {
     private static void readClassNamesInUTF8Value(ByteBuffer readBuffer,
                                                   ConstantPoolItemFlags flags,
                                                   HashSet<String> dependencyClassNames, int constantNumber) {
-        int strSize = readBuffer.getChar(), strStart = readBuffer.position();
+        int strSize = readBuffer.getChar(), strStart = ((java.nio.Buffer) readBuffer).position();
         boolean multipleNames = flags.isNamedType.get(constantNumber);
         if (flags.isClass.get(constantNumber)) {
-            if (readBuffer.get(readBuffer.position()) == ARRAY_START_CHAR) {
+            if (readBuffer.get(((java.nio.Buffer) readBuffer).position()) == ARRAY_START_CHAR) {
                 multipleNames = true;
             } else {
                 addClassNameToDependencySet(dependencyClassNames, readBuffer,
@@ -158,7 +158,7 @@ public class DependencyFinder {
             addClassNamesToDependencySet(dependencyClassNames, readBuffer,
                     strStart, strSize);
         }
-        readBuffer.position(strStart + strSize);
+        ((java.nio.Buffer) readBuffer).position(strStart + strSize);
     }
 
     private static void flagFieldsAndMethodsAsNamedTypes(ByteBuffer readBuffer,
@@ -171,15 +171,15 @@ public class DependencyFinder {
                 int numAttr = readBuffer.getChar();
                 for (int attr = 0; attr < numAttr; attr++) {
                     skipBytes(readBuffer, 2);
-                    readBuffer.position(readBuffer.getInt()
-                            + readBuffer.position());
+                    ((java.nio.Buffer) readBuffer).position(readBuffer.getInt()
+                            + ((java.nio.Buffer) readBuffer).position());
                 }
             }
         }
     }
 
     private static void returnBufferToStartOfConstantPool(ByteBuffer readBuffer) {
-        readBuffer.position(10);
+        ((java.nio.Buffer) readBuffer).position(10);
     }
 
     private static int readOneConstantPoolItemAndSetFlagIfClassOrNamedType(
@@ -219,22 +219,22 @@ public class DependencyFinder {
                 break;
             default:
                 throw new IllegalArgumentException("constant pool item type "
-                        + (readBuffer.get(readBuffer.position() - 1) & 0xff));
+                        + (readBuffer.get(((java.nio.Buffer) readBuffer).position() - 1) & 0xff));
         }
         return currentConstantIndex;
     }
 
     private static void skipBytes(ByteBuffer readBuffer, int bytesToSkip) {
-        readBuffer.position(readBuffer.position() + bytesToSkip);
+        ((java.nio.Buffer) readBuffer).position(((java.nio.Buffer) readBuffer).position() + bytesToSkip);
     }
 
     private static void skipPastVariableLengthString(ByteBuffer readBuffer) {
-        readBuffer.position(readBuffer.getChar() + readBuffer.position());
+        ((java.nio.Buffer) readBuffer).position(readBuffer.getChar() + ((java.nio.Buffer) readBuffer).position());
     }
 
     private static void setCursorToConstantPoolCountPosition(
             ByteBuffer readBuffer) {
-        readBuffer.position(8);
+        ((java.nio.Buffer) readBuffer).position(8);
     }
 
     private static void verifyMagicFileTypeHeader(ByteBuffer readBuffer) {
