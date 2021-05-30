@@ -17,18 +17,21 @@ public class Interceptor {
         this.logs = new ArrayList<>();
     }
 
-    public Category intercept(final Context context) {
+    public ResponseContext intercept(final Context context) {
 
         final Confidence confidence;
         final Category lowLevelCategoryPrediction;
+        final ResponseContext lowLevelResult;
 
         final Category highLevelCategoryPrediction = this.highLevelCategorizer.categorize(context);
         if (highLevelCategoryPrediction == context.getPredictedCategory()) {
             confidence = Confidence.RELIABLE;
             lowLevelCategoryPrediction = null;
+            lowLevelResult = null;
         } else {
             confidence = Confidence.UNRELIABLE;
-            lowLevelCategoryPrediction = lowLevelCategorizer.categorize(context);
+            lowLevelResult = lowLevelCategorizer.categorize(context);
+            lowLevelCategoryPrediction = lowLevelResult.getCategory();
         }
 
         this.logs.add(new Log(context.getRealCategory(),
@@ -38,9 +41,9 @@ public class Interceptor {
                 confidence));
 
         if (confidence == Confidence.RELIABLE) {
-            return highLevelCategoryPrediction;
+            return null;
         } else {
-            return lowLevelCategoryPrediction;
+            return lowLevelResult;
         }
     }
 
