@@ -64,6 +64,8 @@ public class OutputPanel extends JPanel {
                 final File file = new File(chooser.getSelectedFile().toString());
                 try (BufferedWriter outFile = new BufferedWriter(new FileWriter(file))) {
                     OutputPanel.getInstance().getTxtArea().write(outFile);
+                    JOptionPane.showMessageDialog(null, "File saved", null,
+                            JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException e) {
                     final String message = e.getMessage() + CustomExceptionMessage.build(e);
                     JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
