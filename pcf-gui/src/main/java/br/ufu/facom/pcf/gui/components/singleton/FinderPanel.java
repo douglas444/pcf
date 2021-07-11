@@ -13,7 +13,6 @@ import br.ufu.facom.pcf.gui.service.persistence.XMLConfiguration;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.io.File;
 import java.util.List;
@@ -35,8 +34,7 @@ public class FinderPanel extends JPanel implements Persistent {
         this.btnSearch = new JButton("...");
         this.txtPath = new JTextField(1);
         this.txtPath.setEnabled(false);
-        this.chooser = new ChooserForFileListAccessory(
-                FileSystemView.getFileSystemView().getHomeDirectory());
+        this.chooser = new ChooserForFileListAccessory(System.getProperty("user.dir"));
 
         this.setLayout(new GridBagLayout());
         lblClasspath.setFont(lblClasspath.getFont().deriveFont(Font.PLAIN));

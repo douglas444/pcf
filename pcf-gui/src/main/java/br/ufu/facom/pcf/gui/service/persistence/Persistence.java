@@ -23,7 +23,7 @@ public class Persistence {
 
     public static void load() throws ServiceException {
 
-        final JFileChooser fileChooser = new JFileChooser();
+        final JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
         fileChooser.setDialogTitle("Load");
 
         if (fileChooser.showOpenDialog(MainFrame.getInstance()) == JFileChooser.APPROVE_OPTION) {
@@ -55,7 +55,7 @@ public class Persistence {
 
         try{
 
-            final JFileChooser fileChooser = new ChooserWithReplaceWarning();
+            final JFileChooser fileChooser = new ChooserWithReplaceWarning(System.getProperty("user.dir"));
             fileChooser.setSelectedFile(new File("pcf-config.xml"));
             fileChooser.setDialogTitle("Save");
 

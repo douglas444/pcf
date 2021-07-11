@@ -12,7 +12,7 @@ public class ChooserForFileListAccessory extends JFileChooser implements AWTEven
     private int lastEventId;
     private Object source;
 
-    public ChooserForFileListAccessory(File file) {
+    public ChooserForFileListAccessory(String file) {
 
         super(file);
         Toolkit.getDefaultToolkit().addAWTEventListener(this,

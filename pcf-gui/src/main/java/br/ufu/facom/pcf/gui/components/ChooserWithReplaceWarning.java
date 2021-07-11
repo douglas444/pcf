@@ -5,6 +5,10 @@ import java.io.File;
 
 public class ChooserWithReplaceWarning extends JFileChooser {
 
+    public ChooserWithReplaceWarning(final String file) {
+        super(file);
+    }
+
     @Override
     public void approveSelection(){
 
