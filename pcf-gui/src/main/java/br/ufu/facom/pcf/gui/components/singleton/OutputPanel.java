@@ -1,11 +1,18 @@
 package br.ufu.facom.pcf.gui.components.singleton;
 
+import br.ufu.facom.pcf.gui.components.ChooserWithReplaceWarning;
+import br.ufu.facom.pcf.gui.exception.CustomExceptionMessage;
+
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class OutputPanel extends JPanel {
 
@@ -23,15 +30,52 @@ public class OutputPanel extends JPanel {
         final Action paste = new DefaultEditorKit.PasteAction();
         final Action save = new AbstractAction() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("");
+            public void actionPerformed(final ActionEvent actionEvent) {
+
+                final String interceptable = ConfigurationPanel
+                        .getInstance()
+                        .getInterceptableConfigurator()
+                        .getSelectedItem();
+
+                final String highLevelCategorizer = ConfigurationPanel
+                        .getInstance()
+                        .getHighLevelCategorizerConfigurator()
+                        .getSelectedItem();
+
+                final String lowLevelCategorizer = ConfigurationPanel
+                        .getInstance()
+                        .getLowLevelCategorizerConfigurator()
+                        .getSelectedItem();
+
+                final String variation = VariationPanel.getInstance().isUnique() ? "unique" : "multiple";
+
+                final String fileName = interceptable
+                        + "_" + highLevelCategorizer
+                        + "_" + lowLevelCategorizer
+                        + "_" + variation + ".csv";
+
+                final JFileChooser chooser = new ChooserWithReplaceWarning(System.getProperty("user.dir"));
+                chooser.setSelectedFile(new File(fileName));
+                chooser.setApproveButtonText("Save");
+                final int actionDialog = chooser.showOpenDialog(OutputPanel.getInstance());
+                if (actionDialog != JFileChooser.APPROVE_OPTION) {
+                    return;
+                }
+                final File file = new File(chooser.getSelectedFile().toString());
+                try (BufferedWriter outFile = new BufferedWriter(new FileWriter(file))) {
+                    OutputPanel.getInstance().getTxtArea().write(outFile);
+                } catch (IOException e) {
+                    final String message = e.getMessage() + CustomExceptionMessage.build(e);
+                    JOptionPane.showMessageDialog(MainFrame.getInstance(), message,
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         };
 
         final Action selectAll = new TextAction("Select All") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JTextComponent component = getFocusedComponent();
+                final JTextComponent component = getFocusedComponent();
                 component.selectAll();
                 component.requestFocusInWindow();
             }

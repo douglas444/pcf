@@ -12,11 +12,11 @@ public class ChooserWithReplaceWarning extends JFileChooser {
     @Override
     public void approveSelection(){
 
-        File f = getSelectedFile();
+        final File f = getSelectedFile();
 
         if(f.exists() && getDialogType() == SAVE_DIALOG){
 
-            int result = JOptionPane.showConfirmDialog(this,"The file exists, overwrite?",
+            final int result = JOptionPane.showConfirmDialog(this,"The file exists, overwrite?",
                     "Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
 
             switch(result){

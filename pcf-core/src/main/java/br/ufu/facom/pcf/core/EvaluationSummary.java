@@ -355,18 +355,18 @@ public class EvaluationSummary {
         return Arrays.asList(
                 "precision",
                 "sensitivi",
-                "_______f1",
+                "       f1",
                 "hi_cons_k",
                 "hi_cons_n",
-                "___hi_acc",
+                "   hi_acc",
                 "hi_specif",
                 "hi_sensit",
                 "lo_cons_k",
                 "lo_cons_n",
-                "___lo_acc",
+                "   lo_acc",
                 "lo_specif",
                 "lo_sensit",
-                "__err_rec",
+                "  err_rec",
                 "err_intro");
     }
 }
