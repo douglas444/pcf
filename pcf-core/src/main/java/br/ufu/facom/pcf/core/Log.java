@@ -2,14 +2,23 @@ package br.ufu.facom.pcf.core;
 
 public class Log {
 
+    private double labelPurity;
+    private double categoryPurity;
     private Category realCategory;
     private Category basePredictedCategory;
     private Category highLevelPredictedCategory;
     private Category lowLevelPredictedCategory;
     private Confidence confidence;
 
-    public Log(Category realCategory, Category basePredictedCategory, Category highLevelPredictedCategory,
-               Category lowLevelPredictedCategory, Confidence confidence) {
+    public Log(final double labelPurity,
+               final double categoryPurity,
+               final Category realCategory,
+               final Category basePredictedCategory,
+               final Category highLevelPredictedCategory,
+               final Category lowLevelPredictedCategory,
+               final Confidence confidence) {
+        this.labelPurity = labelPurity;
+        this.categoryPurity = categoryPurity;
         this.realCategory = realCategory;
         this.basePredictedCategory = basePredictedCategory;
         this.highLevelPredictedCategory = highLevelPredictedCategory;
@@ -55,5 +64,21 @@ public class Log {
 
     public void setConfidence(Confidence confidence) {
         this.confidence = confidence;
+    }
+
+    public double getLabelPurity() {
+        return labelPurity;
+    }
+
+    public void setLabelPurity(double labelPurity) {
+        this.labelPurity = labelPurity;
+    }
+
+    public double getCategoryPurity() {
+        return categoryPurity;
+    }
+
+    public void setCategoryPurity(double categoryPurity) {
+        this.categoryPurity = categoryPurity;
     }
 }

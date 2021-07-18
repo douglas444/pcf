@@ -34,7 +34,14 @@ public class Interceptor {
             lowLevelCategoryPrediction = lowLevelResult.getCategory();
         }
 
-        this.logs.add(new Log(context.getRealCategory(),
+        final double labelPurity = Util.calculateLabelPurity(context.getSamplesLabels());
+        final double categoryPurity = Util.calculateCategoryPurity(
+                context.getSamplesLabels(),
+                context.getKnownLabels());
+
+        this.logs.add(new Log(labelPurity,
+                categoryPurity,
+                context.getRealCategory(),
                 context.getPredictedCategory(),
                 highLevelCategoryPrediction,
                 lowLevelCategoryPrediction,

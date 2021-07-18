@@ -5,6 +5,12 @@ import java.util.List;
 
 public class EvaluationSummary {
 
+    private final double meanLabelPurityKnown;
+    private final double meanLabelPurityNovelty;
+
+    private final double meanCategoryPurityKnown;
+    private final double meanCategoryPurityNovelty;
+
     private final int highLevelTrueKnown;
     private final int highLevelFalseKnown;
     private final int highLevelTrueNovelty;
@@ -35,6 +41,26 @@ public class EvaluationSummary {
         if (logs.isEmpty()) {
             throw new IllegalArgumentException("Cannot calculate measures. No log was registered.");
         }
+
+        this.meanLabelPurityKnown = logs.stream()
+                .filter(log -> log.getRealCategory() == Category.KNOWN)
+                .mapToDouble(Log::getLabelPurity)
+                .reduce(0.0, Double::sum) / logs.size();
+
+        this.meanLabelPurityNovelty = logs.stream()
+                .filter(log -> log.getRealCategory() == Category.NOVELTY)
+                .mapToDouble(Log::getLabelPurity)
+                .reduce(0.0, Double::sum) / logs.size();
+
+        this.meanCategoryPurityKnown = logs.stream()
+                .filter(log -> log.getRealCategory() == Category.KNOWN)
+                .mapToDouble(Log::getCategoryPurity)
+                .reduce(0.0, Double::sum) / logs.size();
+
+        this.meanCategoryPurityNovelty = logs.stream()
+                .filter(log -> log.getRealCategory() == Category.NOVELTY)
+                .mapToDouble(Log::getCategoryPurity)
+                .reduce(0.0, Double::sum) / logs.size();
 
         this.queryTruePositive = (int) logs.stream()
                 .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
@@ -273,10 +299,31 @@ public class EvaluationSummary {
         return this.lowLevelTrueKnown + this.lowLevelFalseNovelty;
     }
 
+    public double getMeanLabelPurityKnown() {
+        return meanLabelPurityKnown;
+    }
+
+    public double getMeanLabelPurityNovelty() {
+        return meanLabelPurityNovelty;
+    }
+
+    public double getMeanCategoryPurityKnown() {
+        return meanCategoryPurityKnown;
+    }
+
+    public double getMeanCategoryPurityNovelty() {
+        return meanCategoryPurityNovelty;
+    }
+
     @Override
     public String toString() {
 
         return
+                "\nCLUSTERS" +
+                "\nMean label purity known: " + getMeanLabelPurityKnown() +
+                "\nMean label purity novelty: " + getMeanLabelPurityNovelty() +
+                "\nMean category purity known: " + getMeanCategoryPurityKnown() +
+                "\nMean category purity novelty: " + getMeanCategoryPurityNovelty() +
                 "\nCLUSTER QUERYING" +
                 "\nConfusion matrix: " +
                         clusterQueryingConfusionMatrixToString() +
