@@ -42,26 +42,6 @@ public class EvaluationSummary {
             throw new IllegalArgumentException("Cannot calculate measures. No log was registered.");
         }
 
-        this.meanLabelPurityKnown = logs.stream()
-                .filter(log -> log.getRealCategory() == Category.KNOWN)
-                .mapToDouble(Log::getLabelPurity)
-                .reduce(0.0, Double::sum) / logs.size();
-
-        this.meanLabelPurityNovelty = logs.stream()
-                .filter(log -> log.getRealCategory() == Category.NOVELTY)
-                .mapToDouble(Log::getLabelPurity)
-                .reduce(0.0, Double::sum) / logs.size();
-
-        this.meanCategoryPurityKnown = logs.stream()
-                .filter(log -> log.getRealCategory() == Category.KNOWN)
-                .mapToDouble(Log::getCategoryPurity)
-                .reduce(0.0, Double::sum) / logs.size();
-
-        this.meanCategoryPurityNovelty = logs.stream()
-                .filter(log -> log.getRealCategory() == Category.NOVELTY)
-                .mapToDouble(Log::getCategoryPurity)
-                .reduce(0.0, Double::sum) / logs.size();
-
         this.queryTruePositive = (int) logs.stream()
                 .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
                 .filter(log -> log.getRealCategory() != log.getBasePredictedCategory())
@@ -166,6 +146,25 @@ public class EvaluationSummary {
                 .filter(log -> log.getRealCategory() == log.getLowLevelPredictedCategory())
                 .count();
 
+        this.meanLabelPurityKnown = logs.stream()
+                .filter(log -> log.getRealCategory() == Category.KNOWN)
+                .mapToDouble(Log::getLabelPurity)
+                .reduce(0.0, Double::sum) / this.highLevelCategorizerConsultationsKnown();
+
+        this.meanLabelPurityNovelty = logs.stream()
+                .filter(log -> log.getRealCategory() == Category.NOVELTY)
+                .mapToDouble(Log::getLabelPurity)
+                .reduce(0.0, Double::sum) / this.highLevelCategorizerConsultationsNovelty();
+
+        this.meanCategoryPurityKnown = logs.stream()
+                .filter(log -> log.getRealCategory() == Category.KNOWN)
+                .mapToDouble(Log::getCategoryPurity)
+                .reduce(0.0, Double::sum) / this.highLevelCategorizerConsultationsKnown();
+
+        this.meanCategoryPurityNovelty = logs.stream()
+                .filter(log -> log.getRealCategory() == Category.NOVELTY)
+                .mapToDouble(Log::getCategoryPurity)
+                .reduce(0.0, Double::sum) / this.highLevelCategorizerConsultationsNovelty();
     }
 
     public double calculateQueryingPrecision() {
