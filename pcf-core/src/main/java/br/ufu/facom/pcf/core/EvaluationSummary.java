@@ -31,10 +31,15 @@ public class EvaluationSummary {
     private final int queryTrueNegative;
     private final int queryFalseNegative;
 
-    private final int recovered;
-    private final int unrecovered;
-    private final int corrupted;
-    private final int uncorrupted;
+    private final int recoveredNovelty;
+    private final int recoveredKnown;
+    private final int unrecoveredNovelty;
+    private final int unrecoveredKnown;
+
+    private final int corruptedNovelty;
+    private final int corruptedKnown;
+    private final int uncorruptedNovelty;
+    private final int uncorruptedKnown;
 
     public EvaluationSummary(final List<Log> logs) {
 
@@ -122,25 +127,57 @@ public class EvaluationSummary {
                 .filter(log -> log.getLowLevelPredictedCategory() == Category.NOVELTY)
                 .count();
 
-        this.recovered = (int) logs.stream()
+        this.recoveredKnown = (int) logs.stream()
+                .filter(log -> log.getRealCategory() == Category.KNOWN)
                 .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
                 .filter(log -> log.getRealCategory() != log.getBasePredictedCategory())
                 .filter(log -> log.getRealCategory() == log.getLowLevelPredictedCategory())
                 .count();
 
-        this.unrecovered = (int) logs.stream()
+        this.recoveredNovelty = (int) logs.stream()
+                .filter(log -> log.getRealCategory() == Category.NOVELTY)
+                .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
+                .filter(log -> log.getRealCategory() != log.getBasePredictedCategory())
+                .filter(log -> log.getRealCategory() == log.getLowLevelPredictedCategory())
+                .count();
+
+        this.unrecoveredKnown = (int) logs.stream()
+                .filter(log -> log.getRealCategory() == Category.KNOWN)
                 .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
                 .filter(log -> log.getRealCategory() != log.getBasePredictedCategory())
                 .filter(log -> log.getRealCategory() != log.getLowLevelPredictedCategory())
                 .count();
 
-        this.corrupted = (int) logs.stream()
+        this.unrecoveredNovelty = (int) logs.stream()
+                .filter(log -> log.getRealCategory() == Category.NOVELTY)
+                .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
+                .filter(log -> log.getRealCategory() != log.getBasePredictedCategory())
+                .filter(log -> log.getRealCategory() != log.getLowLevelPredictedCategory())
+                .count();
+
+        this.corruptedKnown = (int) logs.stream()
+                .filter(log -> log.getRealCategory() == Category.KNOWN)
                 .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
                 .filter(log -> log.getRealCategory() == log.getBasePredictedCategory())
                 .filter(log -> log.getRealCategory() != log.getLowLevelPredictedCategory())
                 .count();
 
-        this.uncorrupted = (int) logs.stream()
+        this.corruptedNovelty = (int) logs.stream()
+                .filter(log -> log.getRealCategory() == Category.NOVELTY)
+                .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
+                .filter(log -> log.getRealCategory() == log.getBasePredictedCategory())
+                .filter(log -> log.getRealCategory() != log.getLowLevelPredictedCategory())
+                .count();
+
+        this.uncorruptedKnown = (int) logs.stream()
+                .filter(log -> log.getRealCategory() == Category.KNOWN)
+                .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
+                .filter(log -> log.getRealCategory() == log.getBasePredictedCategory())
+                .filter(log -> log.getRealCategory() == log.getLowLevelPredictedCategory())
+                .count();
+
+        this.uncorruptedNovelty = (int) logs.stream()
+                .filter(log -> log.getRealCategory() == Category.NOVELTY)
                 .filter(log -> log.getConfidence() == Confidence.UNRELIABLE)
                 .filter(log -> log.getRealCategory() == log.getBasePredictedCategory())
                 .filter(log -> log.getRealCategory() == log.getLowLevelPredictedCategory())
@@ -219,10 +256,10 @@ public class EvaluationSummary {
 
     public String frameworkConfusionMatrixToString() {
         return "{" +
-                "recovered=" + this.recovered +
-                ", unrecovered=" + this.unrecovered +
-                ", corrupted=" + this.corrupted +
-                ", uncorrupted=" + this.uncorrupted +
+                "recovered=" + this.recoveredKnown + this.recoveredNovelty +
+                ", unrecovered=" + this.unrecoveredKnown + this.unrecoveredNovelty +
+                ", corrupted=" + this.corruptedKnown + this.corruptedNovelty +
+                ", uncorrupted=" + this.uncorruptedKnown + this.uncorruptedNovelty +
                 "}";
     }
 
@@ -275,15 +312,25 @@ public class EvaluationSummary {
     }
 
     public double calculateErrorRecovery() {
-        return this.recovered / (double) (this.baseFalseKnown + this.baseFalseNovelty);
+        return (this.recoveredKnown + this.recoveredNovelty) / (double) (this.baseFalseKnown + this.baseFalseNovelty);
     }
 
     public double calculateErrorIntroduction() {
-        return this.corrupted / (double) (this.baseFalseKnown + this.baseFalseNovelty);
+        return (this.corruptedKnown + this.corruptedNovelty) / (double) (this.baseTrueKnown + this.baseTrueNovelty);
     }
 
     public int highLevelCategorizerConsultationsNovelty() {
         return this.highLevelTrueNovelty + this.highLevelFalseKnown;
+    }
+
+    public double calculateFinalCategorizerSensitivity() {
+        return (this.baseTrueNovelty + (this.recoveredNovelty - this.corruptedNovelty))
+                / (double) (this.baseTrueNovelty + this.baseFalseKnown);
+    }
+
+    public double calculateFinalCategorizerSpecificity() {
+        return (this.baseTrueKnown + (this.recoveredKnown - this.corruptedKnown))
+                / (double) (this.baseTrueKnown + this.baseFalseNovelty);
     }
 
     public int highLevelCategorizerConsultationsKnown() {
@@ -373,7 +420,11 @@ public class EvaluationSummary {
                 "\nError Recovery (__err_rec): " +
                         calculateErrorRecovery() +
                 "\nError Introduction (err_intro): " +
-                        calculateErrorIntroduction();
+                        calculateErrorIntroduction() +
+                "\nFinal Categorization Specificity: " +
+                        calculateFinalCategorizerSpecificity() +
+                "\nFinal Categorization Sensitivity: " +
+                        calculateFinalCategorizerSensitivity();
     }
 
     public List<Double> getValues() {
